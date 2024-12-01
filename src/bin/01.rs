@@ -22,24 +22,24 @@ fn main() -> Result<()> {
 
     //region Part 1
     println!("=== Part 1 ===");
-
     fn part1<R: BufRead>(reader: R) -> Result<u32> {
-        let lines: Vec<String> = reader.lines().collect::<Result<_, _>>().unwrap();
-        let left_list = lines
-            .clone()
-            .into_iter()
-            .map(|l| l.splitn(2, "   ").next().unwrap().parse::<i32>().unwrap())
-            .sorted()
-            .collect::<Vec<i32>>();
-        let right_list = lines
-            .clone()
-            .into_iter()
-            .map(|l| l.splitn(2, "   ").nth(1).unwrap().parse::<i32>().unwrap())
-            .sorted()
-            .collect::<Vec<i32>>();
-        let result = zip(left_list, right_list)
-            .map(|(l, r)| (l - r).abs() as u32)
-            .sum();
+        let (left_list, right_list): (Vec<i32>, Vec<i32>) = reader
+            .lines()
+            .map(|l| {
+                l.unwrap()
+                    .splitn(2, "   ")
+                    .into_iter()
+                    .map(|s| s.parse::<i32>().unwrap())
+                    .collect_tuple::<(i32, i32)>()
+                    .unwrap()
+            })
+            .unzip();
+        let result = zip(
+            left_list.into_iter().sorted(),
+            right_list.into_iter().sorted(),
+        )
+        .map(|(l, r)| (l - r).abs() as u32)
+        .sum();
 
         Ok(result)
     }
@@ -55,19 +55,17 @@ fn main() -> Result<()> {
     println!("\n=== Part 2 ===");
 
     fn part2<R: BufRead>(reader: R) -> Result<u32> {
-        let lines: Vec<String> = reader.lines().collect::<Result<_, _>>().unwrap();
-        let left_list = lines
-            .clone()
-            .into_iter()
-            .map(|l| l.splitn(2, "   ").next().unwrap().parse::<i32>().unwrap())
-            .sorted()
-            .collect::<Vec<i32>>();
-        let right_list = lines
-            .clone()
-            .into_iter()
-            .map(|l| l.splitn(2, "   ").nth(1).unwrap().parse::<i32>().unwrap())
-            .sorted()
-            .collect::<Vec<i32>>();
+        let (left_list, right_list): (Vec<i32>, Vec<i32>) = reader
+            .lines()
+            .map(|l| {
+                l.unwrap()
+                    .splitn(2, "   ")
+                    .into_iter()
+                    .map(|s| s.parse::<i32>().unwrap())
+                    .collect_tuple::<(i32, i32)>()
+                    .unwrap()
+            })
+            .unzip();
         let right_counter: HashMap<i32, i32> =
             right_list.into_iter().fold(HashMap::new(), |mut acc, c| {
                 *acc.entry(c).or_insert(0) += 1;
