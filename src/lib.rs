@@ -3,13 +3,19 @@ pub fn start_day(day: &str) {
 }
 
 // Additional common functions
-#[derive(Ord, PartialOrd, PartialEq, Eq, Debug)]
+#[derive(Ord, PartialOrd, PartialEq, Eq, Debug, Clone)]
 pub enum Day02State {
     Initial,
     FirstStep(i32),
     Increasing(i32),
     Decreasing(i32),
     Unsafe,
+}
+
+#[derive(Ord, PartialOrd, PartialEq, Eq, Debug)]
+pub enum Dampened {
+    Dampened,
+    Undampened,
 }
 pub fn day02_is_safe(acc: Day02State, v: i32) -> Day02State {
     match acc {
@@ -38,6 +44,21 @@ pub fn day02_is_safe(acc: Day02State, v: i32) -> Day02State {
         },
     }
 }
+
+pub fn dampened_day02_is_safe(
+    (accl, accr): (Day02State, Dampened),
+    v: i32,
+) -> (Day02State, Dampened) {
+    let new_state = day02_is_safe(accl.clone(), v);
+    match new_state {
+        Day02State::Unsafe => match accr {
+            Dampened::Dampened => (Day02State::Unsafe, accr),
+            Dampened::Undampened => (accl, Dampened::Dampened),
+        },
+        _ => (new_state, accr),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
