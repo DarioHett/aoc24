@@ -39,25 +39,22 @@ fn main() -> Result<()> {
     println!("\n=== Part 2 ===");
 
     fn part2<R: BufRead>(reader: R) -> Result<i32> {
-        let re = Regex::new(r"(mul\(\d{1,3},\d{1,3}\))|(do\(\))|(don't\(\))")?;
-        let re2 = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)")?;
+        let re = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)|do\(()()\)|don't\(()()\)")?;
         let res = reader.lines().map(|l| l.unwrap()).collect::<String>();
         let mut vec: Vec<i32> = Vec::new();
         let mut state_do = true;
-        for (mtch, [grp]) in re.captures_iter(&res).map(|c| c.extract::<1>()) {
+        for (mtch, [l, r]) in re.captures_iter(&res).map(|c| c.extract::<2>()) {
             if (mtch == "do()") {
                 state_do = true;
             } else if (mtch == "don't()") {
                 state_do = false;
             } else {
                 if state_do {
-                    println!("{}", mtch);
-                    for (_, [l, r]) in re2.captures_iter(&mtch).map(|c| c.extract()) {
-                        vec.push(i32::from_str(l)? * i32::from_str(r)?)
+                    vec.push(i32::from_str(l)? * i32::from_str(r)?);
                     }
                 }
             }
-        }
+
         Ok(vec.clone().iter().sum())
     }
 
