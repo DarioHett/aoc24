@@ -51,9 +51,9 @@ fn main() -> Result<()> {
             } else {
                 if state_do {
                     vec.push(i32::from_str(l)? * i32::from_str(r)?);
-                    }
                 }
             }
+        }
 
         Ok(vec.clone().iter().sum())
     }
