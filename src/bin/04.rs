@@ -108,21 +108,40 @@ fn main() -> Result<()> {
     let result = part1(input_file)?;
     println!("Result = {}", result);
     //endregion
-    //
-    // //region Part 2
-    // println!("\n=== Part 2 ===");
-    //
-    // fn part2<R: BufRead>(reader: R) -> Result<i32> {
-    //     let res = reader.lines().count();
-    //     Ok(res as i32)
-    // }
-    //
-    // assert_eq!(0, part2(BufReader::new(TEST.as_bytes()))?);
-    //
-    // let input_file = BufReader::new(File::open(INPUT_FILE)?);
-    // let result = part2(input_file)?;
-    // println!("Result = {}", result);
-    // //endregion
+
+    //region Part 2
+    println!("\n=== Part 2 ===");
+
+    fn part2<R: BufRead>(reader: R) -> Result<i32> {
+        let res: Vec<Vec<char>> = reader
+            .lines()
+            .map(|s| s.unwrap().chars().collect())
+            .collect::<Vec<Vec<char>>>();
+        let ncols = res.len();
+        let nrows = res[0].len();
+        let mut no_xmas = 0;
+        for col in 0..ncols {
+            for row in 0..nrows {
+                if (row>0) && (row<nrows-1) && (col>0) && (col<ncols-1) {
+                    if res[col][row] == 'A' {
+                        if ((res[col-1][row-1] == 'S') &&  (res[col+1][row+1] == 'M')) || ((res[col-1][row-1] == 'M') &&  (res[col+1][row+1] == 'S')) {
+                            if ((res[col-1][row+1] == 'S') &&  (res[col+1][row-1] == 'M')) || ((res[col-1][row+1] == 'M') &&  (res[col+1][row-1] == 'S')) {
+                                no_xmas += 1;
+                            }
+                        }
+                    }
+                }
+                }
+            }
+        Ok(no_xmas)
+    }
+
+    assert_eq!(9, part2(BufReader::new(TEST.as_bytes()))?);
+
+    let input_file = BufReader::new(File::open(INPUT_FILE)?);
+    let result = part2(input_file)?;
+    println!("Result = {}", result);
+    //endregion
 
     Ok(())
 }
