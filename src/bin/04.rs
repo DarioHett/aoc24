@@ -122,17 +122,22 @@ fn main() -> Result<()> {
         let mut no_xmas = 0;
         for col in 0..ncols {
             for row in 0..nrows {
-                if (row>0) && (row<nrows-1) && (col>0) && (col<ncols-1) {
+                if (row > 0) && (row < nrows - 1) && (col > 0) && (col < ncols - 1) {
                     if res[col][row] == 'A' {
-                        if ((res[col-1][row-1] == 'S') &&  (res[col+1][row+1] == 'M')) || ((res[col-1][row-1] == 'M') &&  (res[col+1][row+1] == 'S')) {
-                            if ((res[col-1][row+1] == 'S') &&  (res[col+1][row-1] == 'M')) || ((res[col-1][row+1] == 'M') &&  (res[col+1][row-1] == 'S')) {
+                        if ((res[col - 1][row - 1] == 'S') && (res[col + 1][row + 1] == 'M'))
+                            || ((res[col - 1][row - 1] == 'M') && (res[col + 1][row + 1] == 'S'))
+                        {
+                            if ((res[col - 1][row + 1] == 'S') && (res[col + 1][row - 1] == 'M'))
+                                || ((res[col - 1][row + 1] == 'M')
+                                    && (res[col + 1][row - 1] == 'S'))
+                            {
                                 no_xmas += 1;
                             }
                         }
                     }
                 }
-                }
             }
+        }
         Ok(no_xmas)
     }
 
