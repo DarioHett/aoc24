@@ -44,8 +44,15 @@ fn main() -> Result<()> {
     println!("=== Part 1 ===");
 
     fn part1<R: BufRead>(reader: R) -> Result<i32> {
-        // let res: Vec<Vec<char>> = reader.lines().;
-       Ok(1)
+        let (rules, updates) = day05_parse(reader);
+        let r = updates.iter().filter(|u| day05_is_sorted(u, &rules)).map(|u| {
+            // let s = day05_sort(u, &rules);
+            let n = day05_middle_number(&u);
+            println!("{} -> {}", format!("{:?}", u), n);
+            n
+        }
+        ).sum::<i32>();
+        Ok(r)
     }
 
     assert_eq!(143, part1(BufReader::new(TEST.as_bytes()))?);
