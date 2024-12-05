@@ -45,13 +45,16 @@ fn main() -> Result<()> {
 
     fn part1<R: BufRead>(reader: R) -> Result<i32> {
         let (rules, updates) = day05_parse(reader);
-        let r = updates.iter().filter(|u| day05_is_sorted(u, &rules)).map(|u| {
-            // let s = day05_sort(u, &rules);
-            let n = day05_middle_number(&u);
-            println!("{} -> {}", format!("{:?}", u), n);
-            n
-        }
-        ).sum::<i32>();
+        let r = updates
+            .iter()
+            .filter(|u| day05_is_sorted(u, &rules))
+            .map(|u| {
+                // let s = day05_sort(u, &rules);
+                let n = day05_middle_number(&u);
+                println!("{} -> {}", format!("{:?}", u), n);
+                n
+            })
+            .sum::<i32>();
         Ok(r)
     }
 
@@ -63,17 +66,28 @@ fn main() -> Result<()> {
     //endregion
 
     //region Part 2
-    // println!("\n=== Part 2 ===");
-    //
-    // fn part2<R: BufRead>(reader: R) -> Result<i32> {
-    //     Ok(1)
-    // }
-    //
-    // assert_eq!(9, part2(BufReader::new(TEST.as_bytes()))?);
-    //
-    // let input_file = BufReader::new(File::open(INPUT_FILE)?);
-    // let result = part2(input_file)?;
-    // println!("Result = {}", result);
+    println!("\n=== Part 2 ===");
+
+    fn part2<R: BufRead>(reader: R) -> Result<i32> {
+        let (rules, updates) = day05_parse(reader);
+        let r = updates
+            .iter()
+            .filter(|u| !day05_is_sorted(u, &rules))
+            .map(|u| {
+                let s = day05_sort(u, &rules);
+                let n = day05_middle_number(&s);
+                println!("{} -> {}", format!("{:?}", &s), n);
+                n
+            })
+            .sum::<i32>();
+        Ok(r)
+    }
+
+    assert_eq!(123, part2(BufReader::new(TEST.as_bytes()))?);
+
+    let input_file = BufReader::new(File::open(INPUT_FILE)?);
+    let result = part2(input_file)?;
+    println!("Result = {}", result);
     //endregion
 
     Ok(())

@@ -1,6 +1,6 @@
 use itertools::Itertools;
 use std::collections::HashMap;
-use std::io::{BufRead, BufReader};
+use std::io::BufRead;
 
 pub fn start_day(day: &str) {
     println!("Advent of Code 2024 - Day {:0>2}", day);
@@ -159,8 +159,8 @@ mod tests {
     }
 
     #[test]
-    fn day05_is_sorted_test_1(){
-        let update: Vec<i32> = vec![1,2,3];
+    fn day05_is_sorted_test_1() {
+        let update: Vec<i32> = vec![1, 2, 3];
         let mut rules = HashMap::new();
         rules.insert(2, vec![1]);
         let is_sorted = day05_is_sorted(&update, &rules);
@@ -168,29 +168,40 @@ mod tests {
     }
 
     #[test]
-    fn day05_is_sorted_test_2(){
-        let update: Vec<i32> = vec![1,2,3];
+    fn day05_is_sorted_test_2() {
+        let update: Vec<i32> = vec![1, 2, 3];
         let mut rules = HashMap::new();
         rules.insert(2, vec![3]);
         let is_sorted = day05_is_sorted(&update, &rules);
         assert_eq!(true, is_sorted);
     }
     #[test]
-    fn day05_sort_test_1(){
-        let update: Vec<i32> = vec![1,2];
+    fn day05_sort_test_1() {
+        let update: Vec<i32> = vec![1, 2];
         let mut rules = HashMap::new();
         rules.insert(2, vec![1]);
         let sorted_update = day05_sort(&update, &rules);
-        assert_eq!(vec![2,1], sorted_update);
+        assert_eq!(vec![2, 1], sorted_update);
     }
 
     #[test]
-    fn day05_sort_test_2(){
-        let update: Vec<i32> = vec![3,1,2];
+    fn day05_sort_test_2() {
+        let update: Vec<i32> = vec![3, 1, 2];
         let mut rules = HashMap::new();
         rules.insert(2, vec![3]);
         rules.insert(3, vec![1]);
         let sorted_update = day05_sort(&update, &rules);
-        assert_eq!(vec![2,3,1], sorted_update);
+        assert_eq!(vec![2, 3, 1], sorted_update);
+    }
+
+    #[test]
+    fn day05_sort_test_3() {
+        let update: Vec<i32> = vec![61, 13, 29];
+        let mut rules = HashMap::new();
+        rules.insert(61, vec![13, 53, 29]);
+        rules.insert(13, vec![]);
+        rules.insert(29, vec![13]);
+        let sorted_update = day05_sort(&update, &rules);
+        assert_eq!(vec![61, 29, 13], sorted_update);
     }
 }
