@@ -251,6 +251,21 @@ pub fn day07_parse_line(line: &str) -> (u64, Vec<u64>) {
     )
 }
 
+pub fn day07_eval_operators_p2(parameters: &Vec<u64>, operators: &str) -> u64 {
+    let mut v = parameters[0];
+    for (i, c) in operators.chars().enumerate() {
+        if c == '+' {
+            v = &v + parameters[i + 1];
+        } else if c == '*' {
+            v = &v * parameters[i + 1];
+        } else if c == '|' {
+            let p = parameters[i + 1];
+            v = format!("{v}{p}").parse::<u64>().unwrap();
+        }
+    }
+    v
+}
+
 pub fn day07_eval_operators(parameters: &Vec<u64>, operators: &str) -> u64 {
     let mut v = parameters[0];
     for (i, c) in operators.chars().enumerate() {
@@ -261,6 +276,37 @@ pub fn day07_eval_operators(parameters: &Vec<u64>, operators: &str) -> u64 {
         }
     }
     v
+}
+
+pub fn day07_generate_operators_p2(n_ops: i32) -> Vec<String> {
+    if n_ops < 0 {
+        panic!("negative number of ops");
+    }
+    if n_ops == 0 {
+        return Vec::new();
+    }
+    let ops_variables = vec!["*", "+", "|"];
+    if n_ops == 1 {
+        return ops_variables
+            .iter()
+            .cloned()
+            .map(|s| s.to_string())
+            .collect();
+    }
+    let combinations: Vec<_> = (2..n_ops).fold(
+        ops_variables
+            .iter()
+            .cartesian_product(ops_variables.iter())
+            .map(|(&a, &b)| a.to_owned() + b)
+            .collect(),
+        |acc, _| {
+            acc.into_iter()
+                .cartesian_product(ops_variables.iter())
+                .map(|(a, b)| a.to_owned() + b)
+                .collect()
+        },
+    );
+    combinations
 }
 
 pub fn day07_generate_operators(n_ops: i32) -> Vec<String> {
@@ -301,6 +347,17 @@ pub fn day07_problem01(line: &str) -> (u64, Vec<String>, Vec<u64>) {
         .iter()
         .cloned()
         .map(|c| day07_eval_operators(&pms, c.as_str()))
+        .collect::<Vec<u64>>();
+    (tv, op_combs, possible_values)
+}
+
+pub fn day07_problem02(line: &str) -> (u64, Vec<String>, Vec<u64>) {
+    let (tv, pms) = day07_parse_line(line);
+    let op_combs = day07_generate_operators_p2((pms.len() - 1) as i32);
+    let possible_values = op_combs
+        .iter()
+        .cloned()
+        .map(|c| day07_eval_operators_p2(&pms, c.as_str()))
         .collect::<Vec<u64>>();
     (tv, op_combs, possible_values)
 }

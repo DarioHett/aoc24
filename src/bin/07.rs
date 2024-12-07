@@ -51,16 +51,29 @@ fn main() -> Result<()> {
     //endregion
 
     //region Part 2
-    // println!("\n=== Part 2 ===");
-    //
-    // fn part2<R: BufRead>(reader: R) -> Result<i32> {
-    // Ok(1)}
-    //
-    // assert_eq!(0, part2(BufReader::new(TEST.as_bytes()))?);
-    //
-    // let input_file = BufReader::new(File::open(INPUT_FILE)?);
-    // let result = part2(input_file)?;
-    // println!("Result = {}", result);
+    println!("\n=== Part 2 ===");
+
+    fn part2<R: BufRead>(reader: R) -> Result<u64> {
+        let vs = reader
+            .lines()
+            .map(|l| {
+                let (t, _, sugg) = day07_problem02(l.unwrap().as_str());
+                let v = if day07_can_be_made_true(&t, &sugg) {
+                    t
+                } else {
+                    0 as u64
+                };
+                v
+            })
+            .collect::<Vec<u64>>();
+        Ok(vs.into_iter().sum())
+    }
+
+    assert_eq!(11387, part2(BufReader::new(TEST.as_bytes()))?);
+
+    let input_file = BufReader::new(File::open(INPUT_FILE)?);
+    let result = part2(input_file)?;
+    println!("Result = {}", result);
     //endregion
 
     Ok(())
