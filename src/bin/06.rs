@@ -5,8 +5,7 @@ use std::clone::Clone;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::iter::zip;
-use std::str::FromStr;
+
 
 const DAY: &str = "06";
 const INPUT_FILE: &str = "input/06.txt";
@@ -116,11 +115,11 @@ fn main() -> Result<()> {
             .cloned()
             .filter(|i| i != &first_guard.pos)
             .collect();
-        let N = path.len();
+        let n = path.len();
         println!("path = {:?}", path);
         let mut loop_cnt: Vec<(i32, i32)> = Vec::new();
         for (i, loc) in path.iter().enumerate() {
-            println!("loop = {:?}, {:?}/{:?}", loc, i, N);
+            println!("loop = {:?}, {:?}/{:?}", loc, i, n);
             // Re-insert guard into map
             the_map[first_guard.pos.1 as usize][first_guard.pos.0 as usize] =
                 day06_from_orientation(first_guard.dpos.clone());

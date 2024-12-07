@@ -1,7 +1,6 @@
 use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
 use std::io::BufRead;
-use std::iter::zip;
 
 pub fn start_day(day: &str) {
     println!("Advent of Code 2024 - Day {:0>2}", day);
