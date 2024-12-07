@@ -233,6 +233,78 @@ pub fn day06_rotate_clockwise((x, y): (i32, i32)) -> (i32, i32) {
     (-y, x)
 }
 
+pub fn day07_can_be_made_true(test_value: &u64, evaluation_values: &Vec<u64>) -> bool {
+    evaluation_values
+        .into_iter()
+        .map(|v| *v)
+        .contains(test_value)
+}
+
+pub fn day07_parse_line(line: &str) -> (u64, Vec<u64>) {
+    let (test_value, parameters) = line.split_once(": ").unwrap();
+    (
+        test_value.parse::<u64>().unwrap(),
+        parameters
+            .split(" ")
+            .map(|s| s.parse::<u64>().unwrap())
+            .collect::<Vec<u64>>(),
+    )
+}
+
+pub fn day07_eval_operators(parameters: &Vec<u64>, operators: &str) -> u64 {
+    let mut v = parameters[0];
+    for (i, c) in operators.chars().enumerate() {
+        if c == '+' {
+            v = &v + parameters[i + 1];
+        } else if c == '*' {
+            v = &v * parameters[i + 1];
+        }
+    }
+    v
+}
+
+pub fn day07_generate_operators(n_ops: i32) -> Vec<String> {
+    if n_ops < 0 {
+        panic!("negative number of ops");
+    }
+    if n_ops == 0 {
+        return Vec::new();
+    }
+    let ops_variables = vec!["*", "+"];
+    if n_ops == 1 {
+        return ops_variables
+            .iter()
+            .cloned()
+            .map(|s| s.to_string())
+            .collect();
+    }
+    let combinations: Vec<_> = (2..n_ops).fold(
+        ops_variables
+            .iter()
+            .cartesian_product(ops_variables.iter())
+            .map(|(&a, &b)| a.to_owned() + b)
+            .collect(),
+        |acc, _| {
+            acc.into_iter()
+                .cartesian_product(ops_variables.iter())
+                .map(|(a, b)| a.to_owned() + b)
+                .collect()
+        },
+    );
+    combinations
+}
+
+pub fn day07_problem01(line: &str) -> (u64, Vec<String>, Vec<u64>) {
+    let (tv, pms) = day07_parse_line(line);
+    let op_combs = day07_generate_operators((pms.len() - 1) as i32);
+    let possible_values = op_combs
+        .iter()
+        .cloned()
+        .map(|c| day07_eval_operators(&pms, c.as_str()))
+        .collect::<Vec<u64>>();
+    (tv, op_combs, possible_values)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -287,5 +359,52 @@ mod tests {
         rules.insert(29, vec![13]);
         let sorted_update = day05_sort(&update, &rules);
         assert_eq!(vec![61, 29, 13], sorted_update);
+    }
+
+    #[test]
+    fn day07_parse_line_test() {
+        let (t, v) = day07_parse_line("0: 1 -1");
+        assert_eq!(t, 0);
+        assert_eq!(v, vec![1, -1]);
+    }
+
+    #[test]
+    fn day07_eval_operators_test_1() {
+        let parameters = vec![1, 1, 1];
+        let operators = "+*";
+        let v = day07_eval_operators(&parameters, &operators);
+        assert_eq!(v, 2);
+    }
+
+    #[test]
+    fn day07_generate_operators_test_1() {
+        let combinations = day07_generate_operators(3);
+        println!("{:?}", combinations);
+        assert_eq!(combinations.len(), 8);
+    }
+    #[test]
+    fn day07_generate_operators_test_2() {
+        let combinations = day07_generate_operators(2);
+        println!("{:?}", combinations);
+        assert_eq!(combinations.len(), 4);
+    }
+    #[test]
+    fn day07_generate_operators_test_3() {
+        let combinations = day07_generate_operators(1);
+        println!("{:?}", combinations);
+        assert_eq!(combinations.len(), 2);
+    }
+
+    #[test]
+    fn day07_single_line_test() {
+        let line = "190: 10 19";
+        let (tv, pms) = day07_parse_line(line);
+        let op_combs = day07_generate_operators((pms.len() - 1) as i32);
+        let possible_values = op_combs
+            .iter()
+            .cloned()
+            .map(|c| day07_eval_operators(&pms, c.as_str()))
+            .collect::<Vec<u64>>();
+        assert!(day07_can_be_made_true(&tv, &possible_values))
     }
 }
