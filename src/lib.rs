@@ -1,6 +1,8 @@
-use itertools::Itertools;
+use itertools::{iproduct, Itertools};
+use serde::Serialize;
 use std::collections::HashMap;
 use std::io::BufRead;
+use std::iter::zip;
 
 pub fn start_day(day: &str) {
     println!("Advent of Code 2024 - Day {:0>2}", day);
@@ -147,6 +149,89 @@ pub fn day05_is_sorted(update: &Vec<i32>, rules: &HashMap<i32, Vec<i32>>) -> boo
 
 pub fn day05_middle_number(sorted_update: &Vec<i32>) -> i32 {
     sorted_update[sorted_update.len().div_euclid(2)]
+}
+
+pub fn day06_orientation(c: char) -> (i32, i32) {
+    match c {
+        '^' => (0, -1),
+        '>' => (1, 0),
+        'v' => (0, 1),
+        '<' => (-1, 0),
+        _ => panic!("invalid orientation"),
+    }
+}
+
+pub fn day06_is_guard(c: char) -> bool {
+    match c {
+        '^' => true,
+        '>' => true,
+        'v' => true,
+        '<' => true,
+        _ => false,
+    }
+}
+
+pub fn day06_from_orientation(o: (i32, i32)) -> char {
+    match o {
+        (0, -1) => '^',
+        (1, 0) => '>',
+        (0, 1) => 'v',
+        (-1, 0) => '<',
+        _ => panic!("invalid orientation"),
+    }
+}
+
+#[derive(Debug)]
+pub struct Guard {
+    pub pos: (i32, i32),
+    dpos: (i32, i32),
+}
+
+impl Guard {
+    pub fn new(pos: (i32, i32), dpos: (i32, i32)) -> Guard {
+        Guard { pos, dpos }
+    }
+
+    pub fn print(&self) -> () {
+        println!(
+            "{2}: x={0},y={1}",
+            self.pos.0,
+            self.pos.1,
+            day06_from_orientation(self.dpos)
+        )
+    }
+    pub fn next_loc(&self) -> (i32, i32) {
+        (self.pos.0 + self.dpos.0, self.pos.1 + self.dpos.1)
+    }
+
+    pub fn step(&self) -> Guard {
+        Self::new(self.next_loc(), self.dpos)
+    }
+
+    pub fn rotate(&self) -> Guard {
+        Guard {
+            pos: self.pos,
+            dpos: day06_rotate_clockwise(self.dpos),
+        }
+    }
+}
+
+pub fn day06_find_guard(a_map: &Vec<Vec<char>>) -> Option<Guard> {
+    let nrows = a_map.len();
+    let ncols = a_map[0].len();
+    for (r, c) in iproduct!(0..nrows, 0..ncols) {
+        if day06_is_guard(a_map[r][c]) {
+            return Some(Guard::new(
+                (c as i32, r as i32),
+                day06_orientation(a_map[r][c]),
+            ));
+        }
+    }
+    None
+}
+
+pub fn day06_rotate_clockwise((x, y): (i32, i32)) -> (i32, i32) {
+    (-y, x)
 }
 
 #[cfg(test)]
