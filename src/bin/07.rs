@@ -54,15 +54,11 @@ fn main() -> Result<()> {
     println!("\n=== Part 2 ===");
 
     fn part2<R: BufRead>(reader: R) -> Result<u64> {
+        let map = day07_generate_operators_p2f();
         let vs = reader
             .lines()
             .map(|l| {
-                let (t, _, sugg) = day07_problem02(l.unwrap().as_str());
-                let v = if day07_can_be_made_true(&t, &sugg) {
-                    t
-                } else {
-                    0 as u64
-                };
+                let v = day07_problem02_w_map(l.unwrap().as_str(), &map);
                 v
             })
             .collect::<Vec<u64>>();

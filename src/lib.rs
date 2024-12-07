@@ -260,7 +260,7 @@ pub fn day07_eval_operators_p2(parameters: &Vec<u64>, operators: &str) -> u64 {
             v = &v * parameters[i + 1];
         } else if c == '|' {
             let p = parameters[i + 1];
-            v = format!("{v}{p}").parse::<u64>().unwrap();
+            v = v * (10u32.pow(p.ilog10() + 1) as u64) + p;
         }
     }
     v
@@ -307,6 +307,14 @@ pub fn day07_generate_operators_p2(n_ops: i32) -> Vec<String> {
         },
     );
     combinations
+}
+
+pub fn day07_generate_operators_p2f() -> HashMap<i32, Vec<String>> {
+    let mut map = HashMap::new();
+    for i in 0..12 {
+        map.insert(i, day07_generate_operators_p2(i));
+    }
+    map
 }
 
 pub fn day07_generate_operators(n_ops: i32) -> Vec<String> {
@@ -360,6 +368,19 @@ pub fn day07_problem02(line: &str) -> (u64, Vec<String>, Vec<u64>) {
         .map(|c| day07_eval_operators_p2(&pms, c.as_str()))
         .collect::<Vec<u64>>();
     (tv, op_combs, possible_values)
+}
+
+pub fn day07_problem02_w_map(line: &str, map: &HashMap<i32, Vec<String>>) -> u64 {
+    let (tv, pms) = day07_parse_line(line);
+    let mut v = 0 as u64;
+    for c in map.get(&((pms.len() - 1) as i32)).unwrap() {
+        let w = day07_eval_operators_p2(&pms, c.as_str());
+        if w == tv {
+            v = w;
+            break;
+        }
+    }
+    v
 }
 
 #[cfg(test)]
