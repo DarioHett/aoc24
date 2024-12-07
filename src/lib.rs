@@ -1,5 +1,4 @@
 use itertools::{iproduct, Itertools};
-use serde::Serialize;
 use std::collections::HashMap;
 use std::io::BufRead;
 use std::iter::zip;
@@ -184,7 +183,7 @@ pub fn day06_from_orientation(o: (i32, i32)) -> char {
 #[derive(Debug)]
 pub struct Guard {
     pub pos: (i32, i32),
-    dpos: (i32, i32),
+    pub dpos: (i32, i32),
 }
 
 impl Guard {
