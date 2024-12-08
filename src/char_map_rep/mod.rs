@@ -19,7 +19,9 @@ impl CharMapRep {
                     new_set.insert(*c);
                     match new_map.get_mut(c) {
                         Some(v) => v.push((j, i)),
-                        None => {new_map.insert(*c, vec![(j, i)]);}
+                        None => {
+                            new_map.insert(*c, vec![(j, i)]);
+                        }
                     };
                 }
             })
@@ -35,7 +37,7 @@ impl CharMapRep {
     }
 
     pub fn loc(&self, (x, y): (usize, usize)) -> Option<char> {
-        match self.is_loc((x,y)) {
+        match self.is_loc((x, y)) {
             true => Some(self.orig_map[y][x]),
             false => None,
         }
@@ -50,5 +52,9 @@ impl CharMapRep {
 
     pub fn is_loc(&self, (x, y): (usize, usize)) -> bool {
         x < self.shape.0 && y < self.shape.1
+    }
+
+    pub fn shape(&self) -> (usize, usize) {
+        self.shape
     }
 }
