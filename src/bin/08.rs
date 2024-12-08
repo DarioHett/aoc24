@@ -4,7 +4,6 @@ use aoc24::*;
 use itertools::Itertools;
 use std::clone::Clone;
 use std::cmp::max;
-use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
@@ -37,7 +36,6 @@ fn main() -> Result<()> {
             .map(|l| l.unwrap().chars().collect::<Vec<char>>())
             .collect::<Vec<Vec<char>>>();
         let maprep = CharMapRep::new(charmap, '.');
-        println!("{:?}", maprep.items());
         let item_location_distance_pair_vect = maprep
             .items()
             .into_iter()
@@ -58,7 +56,6 @@ fn main() -> Result<()> {
             })
             .flatten()
             .collect::<Vec<_>>();
-        println!("{:?}", item_location_distance_pair_vect);
 
         let mut item_location_distance_pairs: Vec<((i32, i32), (i32, i32))> = Vec::new();
         item_location_distance_pair_vect.iter().for_each(
@@ -66,8 +63,6 @@ fn main() -> Result<()> {
                 item_location_distance_pairs.push(((lk.clone(), rk.clone()), v.clone()));
             },
         );
-        println!("{:?}", item_location_distance_pairs);
-
         let res: Vec<_> = item_location_distance_pairs
             .iter()
             .map(|((x, y), (dx, dy))| ((*x as i32 - dx), (*y as i32 - dy)))
@@ -75,7 +70,6 @@ fn main() -> Result<()> {
             .sorted()
             .dedup()
             .collect();
-        println!("{:?}", res);
         Ok(res.len())
     }
 
@@ -96,7 +90,6 @@ fn main() -> Result<()> {
             .map(|l| l.unwrap().chars().collect::<Vec<char>>())
             .collect::<Vec<Vec<char>>>();
         let maprep = CharMapRep::new(charmap, '.');
-        println!("{:?}", maprep.items());
         let nsteps = max(maprep.shape().0, maprep.shape().1) as i32;
         let item_location_distance_pair_vect = maprep
             .items()
@@ -117,16 +110,12 @@ fn main() -> Result<()> {
             })
             .flatten()
             .collect::<Vec<_>>();
-        println!("{:?}", item_location_distance_pair_vect);
-
         let mut item_location_distance_pairs: Vec<((i32, i32), (i32, i32))> = Vec::new();
         item_location_distance_pair_vect.iter().for_each(
             |((lk, rk), v): &((i32, i32), (i32, i32))| {
                 item_location_distance_pairs.push(((lk.clone(), rk.clone()), v.clone()));
             },
         );
-        println!("{:?}", item_location_distance_pairs);
-
         let res: Vec<_> = item_location_distance_pairs
             .iter()
             .map(|((x, y), (dx, dy))| {
@@ -141,7 +130,6 @@ fn main() -> Result<()> {
             .sorted()
             .dedup()
             .collect();
-        println!("{:?}", res);
         Ok(res.len())
     }
 

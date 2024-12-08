@@ -6,7 +6,6 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-
 const DAY: &str = "06";
 const INPUT_FILE: &str = "input/06.txt";
 
