@@ -1,3 +1,5 @@
+pub mod char_map_rep;
+
 use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
 use std::io::BufRead;
