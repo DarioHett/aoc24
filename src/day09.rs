@@ -50,7 +50,7 @@ fn expand_disk_map2(map: &str) -> String {
 }
 
 fn sort_expanded_disk_map(map: &str) -> String {
-    let (mut lix, mut rix): (usize, usize) = (0, map.len() - 1);
+    let (mut lix, mut rix): (usize, usize) = (0, map.chars().count() - 1);
     let mut output: Vec<char> = map.chars().collect();
     while rix > lix {
         if output[rix] == char::MAX {
@@ -68,6 +68,60 @@ fn sort_expanded_disk_map(map: &str) -> String {
     }
     output.iter().collect::<String>()
 }
+
+fn sort_expanded_disk_map_pt2(map: &str) -> String {
+    let (mut lix, mut rix): (usize, usize) = (0, map.chars().count() - 1);
+    let (mut fsize, mut cur_char, mut space): (usize, char, usize) = (0, ' ', 0);
+    let mut output: Vec<char> = map.chars().collect();
+    // Check every(!) file if can be moved forward.
+    while rix > 0 {
+        lix = 0;
+        if output[rix] == char::MAX {
+            // If under right index is a `.`, do nothing, proceed to left.
+            rix -= 1;
+            continue;
+        }
+        cur_char = output[rix];
+        fsize = 0;
+        space = 0;
+        // Determine file size without moving rix
+        while output[rix - fsize] == cur_char {
+            fsize += 1;
+            if (rix == fsize) {
+                break;
+            }
+        }
+        // Arrived at lowest file.
+        if (rix == fsize) {
+            break;
+        }
+
+        // Determine space
+        while (lix + space) < rix {
+            // Space is sufficient(!)
+            if space == fsize {
+                break;
+            }
+            if output[lix + space] != char::MAX {
+                // If under left index not a `.`, do nothing, proceed to right.
+                lix += 1;
+                space = 0;
+                continue;
+            }
+            // TODO: remember to reset `space` and `lix`!
+            space += 1;
+        }
+
+        for i in 0..space {
+            output[lix + i] = output[rix - i];
+            output[rix - i] = char::MAX;
+        }
+
+        rix -= fsize;
+    }
+    output.iter().collect::<String>()
+}
+
 fn sort2_expanded_disk_map(map: &str) -> String {
     let (mut lix, mut rix): (usize, usize) = (0, (map.chars().count() - 1));
     let mut output: Vec<char> = map.chars().collect();
@@ -112,9 +166,17 @@ fn checksum2(map: &str) -> u64 {
 
 pub fn part01(map: &str) -> u64 {
     let exp_map = expand_disk_map2(map);
-    println!("{:?}", exp_map);
+    // println!("{:?}", exp_map);
     let sorted_map = sort2_expanded_disk_map(exp_map.as_str());
-    println!("{:?}", sorted_map);
+    // println!("{:?}", sorted_map);
+    checksum2(sorted_map.as_str())
+}
+
+pub fn part02(map: &str) -> u64 {
+    let exp_map = expand_disk_map2(map);
+    // println!("{:?}", exp_map);
+    let sorted_map = sort_expanded_disk_map_pt2(exp_map.as_str());
+    // println!("{:?}", sorted_map);
     checksum2(sorted_map.as_str())
 }
 
@@ -136,22 +198,22 @@ mod tests {
     #[test]
     fn test_sort_expanded_disk_map() {
         assert_eq!(
-            sort_expanded_disk_map("00...111...2...333.44.5555.6666.777.888899"),
-            "0099811188827773336446555566..............".to_string()
+            sort_expanded_disk_map("\0\0\u{10ffff}\u{10ffff}\u{10ffff}\u{1}\u{1}\u{1}\u{10ffff}\u{10ffff}\u{10ffff}\u{2}\u{10ffff}\u{10ffff}\u{10ffff}\u{3}\u{3}\u{3}\u{10ffff}\u{4}\u{4}\u{10ffff}\u{5}\u{5}\u{5}\u{5}\u{10ffff}\u{6}\u{6}\u{6}\u{6}\u{10ffff}\u{7}\u{7}\u{7}\u{10ffff}\u{8}\u{8}\u{8}\u{8}\t\t\n\n"),
+            "\0\0\n\n\t\u{1}\u{1}\u{1}\t\u{8}\u{8}\u{2}\u{8}\u{8}\u{7}\u{3}\u{3}\u{3}\u{7}\u{4}\u{4}\u{7}\u{5}\u{5}\u{5}\u{5}\u{6}\u{6}\u{6}\u{6}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}".to_string()
         )
     }
 
     #[test]
     fn test_sort2_expanded_disk_map() {
         assert_eq!(
-            sort2_expanded_disk_map("00...111...2...333.44.5555.6666.777.888899"),
-            "0099811188827773336446555566".to_string()
+            sort2_expanded_disk_map("\0\0\u{10ffff}\u{10ffff}\u{10ffff}\u{1}\u{1}\u{1}\u{10ffff}\u{10ffff}\u{10ffff}\u{2}\u{10ffff}\u{10ffff}\u{10ffff}\u{3}\u{3}\u{3}\u{10ffff}\u{4}\u{4}\u{10ffff}\u{5}\u{5}\u{5}\u{5}\u{10ffff}\u{6}\u{6}\u{6}\u{6}\u{10ffff}\u{7}\u{7}\u{7}\u{10ffff}\u{8}\u{8}\u{8}\u{8}\t\t\n\n"),
+            "\0\0\n\n\t\u{1}\u{1}\u{1}\t\u{8}\u{8}\u{2}\u{8}\u{8}\u{7}\u{3}\u{3}\u{3}\u{7}\u{4}\u{4}\u{7}\u{5}\u{5}\u{5}\u{5}\u{6}\u{6}\u{6}\u{6}".to_string()
         )
     }
 
     #[test]
     fn test_sort_expanded_disk_map2() {
-        assert_eq!(sort_expanded_disk_map("\0\0\u{10ffff}\u{10ffff}\u{10ffff}\u{1}\u{1}\u{1}\u{10ffff}\u{10ffff}\u{10ffff}\u{2}\u{10ffff}\u{10ffff}\u{10ffff}\u{3}\u{3}\u{3}\u{10ffff}\u{4}\u{4}\u{10ffff}\u{5}\u{5}\u{5}\u{5}\u{10ffff}\u{6}\u{6}\u{6}\u{6}\u{10ffff}\u{7}\u{7}\u{7}\u{10ffff}\u{8}\u{8}\u{8}\u{8}\t\t\n\n"), "\0\0\n\n\t\u{1}\u{1}\u{1}\t\u{8}\u{8}\u{2}\u{8}\u{8}\u{7}\u{3}\u{3}\u{3}\u{7}\u{4}\u{4}\u{7}\u{5}\u{5}\u{5}\u{5}\u{6}\u{6}\u{6}\u{6}..............".to_string())
+        assert_eq!(sort_expanded_disk_map("\0\0\u{10ffff}\u{10ffff}\u{10ffff}\u{1}\u{1}\u{1}\u{10ffff}\u{10ffff}\u{10ffff}\u{2}\u{10ffff}\u{10ffff}\u{10ffff}\u{3}\u{3}\u{3}\u{10ffff}\u{4}\u{4}\u{10ffff}\u{5}\u{5}\u{5}\u{5}\u{10ffff}\u{6}\u{6}\u{6}\u{6}\u{10ffff}\u{7}\u{7}\u{7}\u{10ffff}\u{8}\u{8}\u{8}\u{8}\t\t\n\n"), "\0\0\n\n\t\u{1}\u{1}\u{1}\t\u{8}\u{8}\u{2}\u{8}\u{8}\u{7}\u{3}\u{3}\u{3}\u{7}\u{4}\u{4}\u{7}\u{5}\u{5}\u{5}\u{5}\u{6}\u{6}\u{6}\u{6}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}\u{10ffff}".to_string())
     }
 
     #[test]
