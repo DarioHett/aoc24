@@ -1,4 +1,5 @@
 pub mod char_map_rep;
+pub mod day09;
 
 use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
@@ -442,9 +443,9 @@ mod tests {
 
     #[test]
     fn day07_parse_line_test() {
-        let (t, v) = day07_parse_line("0: 1 -1");
+        let (t, v) = day07_parse_line("0: 1 2");
         assert_eq!(t, 0);
-        assert_eq!(v, vec![1, -1]);
+        assert_eq!(v, vec![1, 2]);
     }
 
     #[test]
