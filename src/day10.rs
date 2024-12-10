@@ -97,6 +97,33 @@ pub fn recursion(
         .collect::<Vec<(i32, i32)>>()
 }
 
+pub fn recursion2(
+    curr_loc: (i32, i32),
+    map: &Vec<Vec<i32>>,
+    bounds: (&i32, &i32),
+) -> Vec<(i32, i32)> {
+    if is_peak(curr_loc, map) {
+        return vec![curr_loc];
+    }
+    let cv = value_at_location(curr_loc, map);
+    let locs = eligible_locations(curr_loc, bounds)
+        .iter()
+        .cloned()
+        .filter(|loc| value_at_location_is_increment(cv, *loc, &map))
+        .collect::<Vec<(i32, i32)>>();
+    let mut collection = Vec::new();
+    for loc in locs {
+        let v = crate::day10::recursion2(loc, &map, bounds)
+            .into_iter()
+            .collect::<Vec<(i32, i32)>>();
+        collection.push(v);
+    }
+    collection
+        .into_iter()
+        .flatten()
+        .collect::<Vec<(i32, i32)>>()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
