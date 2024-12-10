@@ -1,9 +1,7 @@
 use anyhow::*;
-use aoc24::day10::{eligible_locations_closure, value_at_location_is_increment};
 use aoc24::*;
 use itertools::Itertools;
-use std::clone::Clone;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
@@ -38,8 +36,8 @@ fn main() -> Result<()> {
             .map(|(y, xs)| {
                 xs.iter()
                     .enumerate()
-                    .filter(|(x, v)| day10::is_trailhead((*x as i32, y as i32), &map))
-                    .map(|(x, v)| (x as i32, y as i32))
+                    .filter(|(x, _v)| day10::is_trailhead((*x as i32, y as i32), &map))
+                    .map(|(x, _v)| (x as i32, y as i32))
                     .collect::<Vec<(i32, i32)>>()
             })
             .flatten()
@@ -78,8 +76,8 @@ fn main() -> Result<()> {
             .map(|(y, xs)| {
                 xs.iter()
                     .enumerate()
-                    .filter(|(x, v)| day10::is_trailhead((*x as i32, y as i32), &map))
-                    .map(|(x, v)| (x as i32, y as i32))
+                    .filter(|(x, _v)| day10::is_trailhead((*x as i32, y as i32), &map))
+                    .map(|(x, _v)| (x as i32, y as i32))
                     .collect::<Vec<(i32, i32)>>()
             })
             .flatten()

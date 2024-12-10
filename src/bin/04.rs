@@ -1,9 +1,7 @@
 use anyhow::*;
 use aoc24::*;
-use std::clone::Clone;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::str::FromStr;
 
 const DAY: &str = "04";
 const INPUT_FILE: &str = "input/04.txt";

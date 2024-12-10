@@ -1,3 +1,5 @@
+#[allow(dead_code)]
+
 use itertools::Itertools;
 
 const POSSIBLE_MOVES: &[(i32, i32)] = &[
@@ -30,7 +32,7 @@ fn eligible_locations((x, y): (i32, i32), (max_x, max_y): (&i32, &i32)) -> Vec<(
 fn value_at_location(location: (i32, i32), map: &Vec<Vec<i32>>) -> i32 {
     map[location.1 as usize][location.0 as usize]
 }
-
+#[allow(dead_code)]
 fn value_at_location_is_lower(
     current_value: i32,
     location: (i32, i32),
@@ -38,7 +40,7 @@ fn value_at_location_is_lower(
 ) -> bool {
     current_value > value_at_location(location, map)
 }
-
+#[allow(dead_code)]
 fn value_at_location_is_higher(
     current_value: i32,
     location: (i32, i32),

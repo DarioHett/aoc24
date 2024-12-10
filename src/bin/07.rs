@@ -1,6 +1,5 @@
 use anyhow::*;
 use aoc24::*;
-use std::clone::Clone;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 

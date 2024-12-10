@@ -1,10 +1,12 @@
+#[allow(dead_code)]
+
 use itertools::repeat_n;
 
 pub enum DiskMapState {
     DiskDigit(u32),
     Empty(u32),
 }
-
+#[allow(dead_code)]
 fn expand_disk_map(map: &str) -> String {
     let mut state = DiskMapState::DiskDigit(0);
     let substrs = map
@@ -48,7 +50,7 @@ fn expand_disk_map2(map: &str) -> String {
         .collect::<Vec<String>>();
     substrs.iter().fold(String::new(), |acc, s| acc + s)
 }
-
+#[allow(dead_code)]
 fn sort_expanded_disk_map(map: &str) -> String {
     let (mut lix, mut rix): (usize, usize) = (0, map.chars().count() - 1);
     let mut output: Vec<char> = map.chars().collect();
@@ -70,8 +72,8 @@ fn sort_expanded_disk_map(map: &str) -> String {
 }
 
 fn sort_expanded_disk_map_pt2(map: &str) -> String {
-    let (mut lix, mut rix): (usize, usize) = (0, map.chars().count() - 1);
-    let (mut fsize, mut cur_char, mut space): (usize, char, usize) = (0, ' ', 0);
+    let mut rix: usize = map.chars().count() - 1;
+    let (mut lix, mut fsize, mut cur_char, mut space): (usize, usize, char, usize);
     let mut output: Vec<char> = map.chars().collect();
     // Check every(!) file if can be moved forward.
     while rix > 0 {
@@ -87,12 +89,12 @@ fn sort_expanded_disk_map_pt2(map: &str) -> String {
         // Determine file size without moving rix
         while output[rix - fsize] == cur_char {
             fsize += 1;
-            if (rix == fsize) {
+            if rix == fsize {
                 break;
             }
         }
         // Arrived at lowest file.
-        if (rix == fsize) {
+        if rix == fsize {
             break;
         }
 
@@ -143,7 +145,7 @@ fn sort2_expanded_disk_map(map: &str) -> String {
     }
     output.iter().collect::<String>()
 }
-
+#[allow(dead_code)]
 fn checksum(map: &str) -> u64 {
     map.chars().enumerate().fold(0, |acc, (i, c)| {
         if c == char::MAX {

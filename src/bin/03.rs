@@ -44,9 +44,9 @@ fn main() -> Result<()> {
         let mut vec: Vec<i32> = Vec::new();
         let mut state_do = true;
         for (mtch, [l, r]) in re.captures_iter(&res).map(|c| c.extract::<2>()) {
-            if (mtch == "do()") {
+            if mtch == "do()" {
                 state_do = true;
-            } else if (mtch == "don't()") {
+            } else if mtch == "don't()" {
                 state_do = false;
             } else {
                 if state_do {

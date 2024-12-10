@@ -38,7 +38,7 @@ fn main() -> Result<()> {
         while !next_loc_exceeds_boundaries {
             guard.print();
             let (next_x, next_y) = guard.next_loc();
-            if (next_x >= (nrow as i32) || next_x < 0 || next_y >= (ncol as i32) || next_y < 0) {
+            if next_x >= (nrow as i32) || next_x < 0 || next_y >= (ncol as i32) || next_y < 0 {
                 the_map[guard.pos.1 as usize][guard.pos.0 as usize] = 'X';
                 next_loc_exceeds_boundaries = true;
                 break;
@@ -86,7 +86,7 @@ fn main() -> Result<()> {
         while !next_loc_exceeds_boundaries {
             guard.print();
             let (next_x, next_y) = guard.next_loc();
-            if (next_x >= (nrow as i32) || next_x < 0 || next_y >= (ncol as i32) || next_y < 0) {
+            if next_x >= (nrow as i32) || next_x < 0 || next_y >= (ncol as i32) || next_y < 0 {
                 the_map[guard.pos.1 as usize][guard.pos.0 as usize] = 'X';
                 path.push(guard.pos.clone());
                 next_loc_exceeds_boundaries = true;
@@ -131,8 +131,7 @@ fn main() -> Result<()> {
             while !next_loc_exceeds_boundaries {
                 // guard.print();
                 let (next_x, next_y) = guard.next_loc();
-                if (next_x >= (nrow as i32) || next_x < 0 || next_y >= (ncol as i32) || next_y < 0)
-                {
+                if next_x >= (nrow as i32) || next_x < 0 || next_y >= (ncol as i32) || next_y < 0 {
                     the_map[guard.pos.1 as usize][guard.pos.0 as usize] = 'X';
                     next_loc_exceeds_boundaries = true;
                     break;
@@ -147,7 +146,7 @@ fn main() -> Result<()> {
                 if c == '.' || c == 'X' {
                     the_map[guard.pos.1 as usize][guard.pos.0 as usize] = 'X';
                     if let Some(count) = counter.get(&guard.pos) {
-                        if (*count > 5) {
+                        if *count > 5 {
                             loop_cnt.push(*loc);
                             break;
                         };

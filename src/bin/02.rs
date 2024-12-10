@@ -89,7 +89,7 @@ fn main() -> Result<()> {
 
         Ok(n - answer
             .into_iter()
-            .map(|(l)| l.eq(&Day02State::Unsafe) as usize)
+            .map(|l| l.eq(&Day02State::Unsafe) as usize)
             .sum::<usize>())
     }
 
