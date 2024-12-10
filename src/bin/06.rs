@@ -33,14 +33,12 @@ fn main() -> Result<()> {
             .collect::<Vec<Vec<char>>>();
         let nrow = the_map.len();
         let ncol = the_map[0].len();
-        let mut next_loc_exceeds_boundaries = false;
         let mut guard = day06_find_guard(&the_map).unwrap();
-        while !next_loc_exceeds_boundaries {
+        loop {
             guard.print();
             let (next_x, next_y) = guard.next_loc();
             if next_x >= (nrow as i32) || next_x < 0 || next_y >= (ncol as i32) || next_y < 0 {
                 the_map[guard.pos.1 as usize][guard.pos.0 as usize] = 'X';
-                next_loc_exceeds_boundaries = true;
                 break;
             }
 
@@ -79,17 +77,15 @@ fn main() -> Result<()> {
             .collect::<Vec<Vec<char>>>();
         let nrow = the_map.len();
         let ncol = the_map[0].len();
-        let mut next_loc_exceeds_boundaries = false;
         let mut guard = day06_find_guard(&the_map).unwrap();
         let first_guard = Guard::new(guard.pos.clone(), guard.dpos.clone());
         let mut path: Vec<(i32, i32)> = Vec::new();
-        while !next_loc_exceeds_boundaries {
+        loop {
             guard.print();
             let (next_x, next_y) = guard.next_loc();
             if next_x >= (nrow as i32) || next_x < 0 || next_y >= (ncol as i32) || next_y < 0 {
                 the_map[guard.pos.1 as usize][guard.pos.0 as usize] = 'X';
                 path.push(guard.pos.clone());
-                next_loc_exceeds_boundaries = true;
                 break;
             }
 
@@ -126,14 +122,12 @@ fn main() -> Result<()> {
             the_map[loc.1 as usize][loc.0 as usize] = '#';
             let nrow = the_map.len();
             let ncol = the_map[0].len();
-            let mut next_loc_exceeds_boundaries = false;
             let mut guard = day06_find_guard(&the_map).unwrap();
-            while !next_loc_exceeds_boundaries {
+            loop {
                 // guard.print();
                 let (next_x, next_y) = guard.next_loc();
                 if next_x >= (nrow as i32) || next_x < 0 || next_y >= (ncol as i32) || next_y < 0 {
                     the_map[guard.pos.1 as usize][guard.pos.0 as usize] = 'X';
-                    next_loc_exceeds_boundaries = true;
                     break;
                 }
 
