@@ -2,6 +2,7 @@
 pub mod char_map_rep;
 pub mod day09;
 pub mod day10;
+pub mod day11;
 
 use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
