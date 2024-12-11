@@ -27,7 +27,7 @@ fn third_rule(i: u64) -> u64 {
     i * 2024
 }
 
-pub fn apply_rules_recur(i: u64, ctr: u64, mut cache: &mut LruCache<(u64, u64), u64>) -> u64 {
+pub fn apply_rules_recur(i: u64, ctr: u64, cache: &mut LruCache<(u64, u64), u64>) -> u64 {
     if ctr == 0 {
         return 1;
     }
@@ -57,12 +57,12 @@ pub fn apply_rules_recur_25(i: u64, ctr: u64) -> u64 {
         return 1;
     }
     if number_is_zero(i) {
-        crate::day11::apply_rules_recur_25(i + 1, ctr + 1)
+        apply_rules_recur_25(i + 1, ctr + 1)
     } else if number_of_digits_are_even(i) {
-        crate::day11::apply_rules_recur_25(left_split_stones(i), ctr + 1)
-            + crate::day11::apply_rules_recur_25(right_split_stones(i), ctr + 1)
+        apply_rules_recur_25(left_split_stones(i), ctr + 1)
+            + apply_rules_recur_25(right_split_stones(i), ctr + 1)
     } else {
-        crate::day11::apply_rules_recur_25(third_rule(i), ctr + 1)
+        apply_rules_recur_25(third_rule(i), ctr + 1)
     }
 }
 

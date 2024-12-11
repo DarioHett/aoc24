@@ -18,20 +18,13 @@ fn main() -> Result<()> {
     println!("=== Part 1 ===");
 
     fn part1<R: BufRead>(reader: R) -> Result<usize> {
-        let mut v = parse_input(reader.lines().map(|l| l.unwrap()).next().unwrap().as_str());
-        // for i in 0..25 {
-        //     println!("{:?}/25", i);
-        //     v = apply_rules_vec(v);
-        // }
-        // Ok(v.len())
-        // Ok(v.into_iter().map(|i|apply_rules_recur_25(i, 0)).sum::<u64>() as usize)
+        let v = parse_input(reader.lines().map(|l| l.unwrap()).next().unwrap().as_str());
         let mut cache = LruCache::new(NonZeroUsize::new(10_000_000).unwrap());
-        let mut cache_ref = &mut cache;
         Ok(v.into_iter()
             .enumerate()
             .map(|(a, i)| {
                 println!("{:?}", a);
-                apply_rules_recur(i, 25, cache_ref)
+                apply_rules_recur(i, 25, &mut cache)
             })
             .sum::<u64>() as usize)
     }
@@ -48,19 +41,14 @@ fn main() -> Result<()> {
 
     fn part2<R: BufRead>(reader: R) -> Result<usize> {
         let v = parse_input(reader.lines().map(|l| l.unwrap()).next().unwrap().as_str());
-        // for i in 0..75 {
-        //     println!("{:?}/75", i);
-        //     v = apply_rules_vec(v);
-        // }
-        // Ok(v.len())
+
         let mut cache = LruCache::new(NonZeroUsize::new(10_000_000).unwrap());
-        let mut cache_ref = &mut cache;
 
         Ok(v.into_iter()
             .enumerate()
             .map(|(a, i)| {
                 println!("{:?}", a);
-                apply_rules_recur(i, 75, cache_ref)
+                apply_rules_recur(i, 75, &mut cache)
             })
             .sum::<u64>() as usize)
     }
