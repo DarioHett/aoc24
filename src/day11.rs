@@ -1,3 +1,4 @@
+use lru::LruCache;
 use std::ops::Div;
 
 pub fn parse_input(input: &str) -> Vec<u64> {
@@ -24,6 +25,45 @@ fn right_split_stones(i: u64) -> u64 {
 
 fn third_rule(i: u64) -> u64 {
     i * 2024
+}
+
+pub fn apply_rules_recur(i: u64, ctr: u64, mut cache: &mut LruCache<(u64, u64), u64>) -> u64 {
+    if ctr == 0 {
+        return 1;
+    }
+    if let Some(x) = cache.get(&(i, &ctr - 1)) {
+        println!("Cache hit: {:?} {:?}", i, x);
+        return *x;
+    }
+    if number_is_zero(i) {
+        let res = apply_rules_recur(i + 1, ctr - 1, cache);
+        cache.put((i, ctr - 1), res);
+        return res;
+    } else if number_of_digits_are_even(i) {
+        let lres = apply_rules_recur(left_split_stones(i), ctr - 1, cache);
+        let rres = apply_rules_recur(right_split_stones(i), ctr - 1, cache);
+        let res = lres + rres;
+        cache.put((i, ctr - 1), res);
+        return res;
+    } else {
+        let res = apply_rules_recur(third_rule(i), ctr - 1, cache);
+        cache.put((i, ctr - 1), res);
+        return res;
+    }
+}
+
+pub fn apply_rules_recur_25(i: u64, ctr: u64) -> u64 {
+    if ctr == 25 {
+        return 1;
+    }
+    if number_is_zero(i) {
+        crate::day11::apply_rules_recur_25(i + 1, ctr + 1)
+    } else if number_of_digits_are_even(i) {
+        crate::day11::apply_rules_recur_25(left_split_stones(i), ctr + 1)
+            + crate::day11::apply_rules_recur_25(right_split_stones(i), ctr + 1)
+    } else {
+        crate::day11::apply_rules_recur_25(third_rule(i), ctr + 1)
+    }
 }
 
 fn apply_rules(i: u64) -> Vec<u64> {
