@@ -1,5 +1,4 @@
 #[allow(dead_code)]
-
 use itertools::repeat_n;
 
 pub enum DiskMapState {

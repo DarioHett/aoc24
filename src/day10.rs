@@ -1,5 +1,4 @@
 #[allow(dead_code)]
-
 use itertools::Itertools;
 
 const POSSIBLE_MOVES: &[(i32, i32)] = &[

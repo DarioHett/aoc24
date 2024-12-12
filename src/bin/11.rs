@@ -23,7 +23,7 @@ fn main() -> Result<()> {
         Ok(v.into_iter()
             .enumerate()
             .map(|(a, i)| {
-                println!("{:?}", a);
+                // println!("{:?}", a);
                 apply_rules_recur(i, 25, &mut cache)
             })
             .sum::<u64>() as usize)
@@ -47,7 +47,7 @@ fn main() -> Result<()> {
         Ok(v.into_iter()
             .enumerate()
             .map(|(a, i)| {
-                println!("{:?}", a);
+                // println!("{:?}", a);
                 apply_rules_recur(i, 75, &mut cache)
             })
             .sum::<u64>() as usize)

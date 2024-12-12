@@ -32,7 +32,7 @@ pub fn apply_rules_recur(i: u64, ctr: u64, cache: &mut LruCache<(u64, u64), u64>
         return 1;
     }
     if let Some(x) = cache.get(&(i, &ctr - 1)) {
-        println!("Cache hit: {:?} {:?}", i, x);
+        // println!("Cache hit: {:?} {:?}", i, x);
         return *x;
     }
     if number_is_zero(i) {
