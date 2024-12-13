@@ -1,11 +1,9 @@
 use anyhow::*;
 use aoc24::day12::{
     component_walls, components, components_with_sizes, grid_to_map, horizontal_sides, parse_line,
-    size_map, vertical_sides, walk, Walls,
+    size_map, vertical_sides, Walls,
 };
 use aoc24::*;
-use itertools::Itertools;
-use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::ops::Mul;
@@ -46,25 +44,12 @@ fn main() -> Result<()> {
     assert_eq!(1930, part1(BufReader::new(TEST.as_bytes()))?);
 
     let input_file = BufReader::new(File::open(INPUT_FILE)?);
-    // let result = part1(input_file)?;
-    // println!("Result = {}", result);
+    let result = part1(input_file)?;
+    println!("Result = {}", result);
     //endregion
 
     //region Part 2
     println!("\n=== Part 2 ===");
-
-
-    // A region of R plants with price 12 * 10 = 120. x
-    // A region of I plants with price 4 * 4 = 16. x
-    // A region of C plants with price 14 * 22 = 308. (280), ctr 20
-    // A region of F plants with price 10 * 12 = 120. (110), ctr 11
-    // A region of V plants with price 13 * 10 = 130. (117), ctr 9
-    // A region of J plants with price 11 * 12 = 132. x
-    // A region of C plants with price 1 * 4 = 4. x
-    // A region of E plants with price 13 * 8 = 104. x
-    // A region of I plants with price 14 * 16 = 224. 210, ctr = 15
-    // A region of M plants with price 5 * 6 = 30. x
-    // A region of S plants with price 3 * 6 = 18. x
 
     fn part2<R: BufRead>(reader: R) -> Result<usize> {
         let grid = reader
@@ -84,9 +69,6 @@ fn main() -> Result<()> {
                 Walls::Left => ctr += vertical_sides(ps),
                 Walls::Right => ctr += vertical_sides(ps),
             });
-            println!("cwalls = {:?}", cwall_map);
-            println!("ctr = {}", ctr);
-            println!("val = {}", ctr.mul(c.len()));
 
             res += ctr.mul(c.len())
         }

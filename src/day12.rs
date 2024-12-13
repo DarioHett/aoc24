@@ -1,4 +1,3 @@
-use crate::day12::Walls::{Above, Beneath, Left};
 use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
 use std::ops::Mul;
@@ -9,10 +8,6 @@ pub fn parse_line(input: &str, line_number: usize) -> Vec<(char, usize, usize)> 
         .enumerate()
         .map(|(x, c)| (c, x, line_number))
         .collect::<Vec<_>>()
-}
-
-fn char_at_location((x, y): (usize, usize), grid: &Vec<Vec<(char, usize, usize)>>) -> char {
-    grid[y][x].0
 }
 
 pub fn eligible_locations_closure<'a>(
@@ -179,18 +174,18 @@ pub fn component_fencing(
 //  `other` is above.
 fn is_above(plant: &(char, usize, usize), other: &(char, usize, usize)) -> bool {
     //  `other` is above.
-    (plant.1 == other.1) && (other.2+1 == plant.2)
+    (plant.1 == other.1) && (other.2 + 1 == plant.2)
 }
 fn is_beneath(plant: &(char, usize, usize), other: &(char, usize, usize)) -> bool {
-    (plant.1 == other.1) && (other.2 == plant.2+1)
+    (plant.1 == other.1) && (other.2 == plant.2 + 1)
 }
 fn is_left(plant: &(char, usize, usize), other: &(char, usize, usize)) -> bool {
     //  `other` is left.
-    (plant.1 == other.1+1) && (other.2 == plant.2)
+    (plant.1 == other.1 + 1) && (other.2 == plant.2)
 }
 
 fn is_right(plant: &(char, usize, usize), other: &(char, usize, usize)) -> bool {
-    (plant.1+1 == other.1) && (other.2 == plant.2)
+    (plant.1 + 1 == other.1) && (other.2 == plant.2)
 }
 
 fn has_right_neighbor(plant: &(char, usize, usize), others: &Vec<(char, usize, usize)>) -> bool {
@@ -263,9 +258,9 @@ pub fn vertical_sides(sides: &Vec<(char, usize, usize)>) -> usize {
         .sorted_by_key(|(_, x, _)| x)
         .chunk_by(|(_, x, _)| x)
         .into_iter()
-        .map(|(i, z)| z.sorted_by_key(|(_, _, y)| y).collect::<Vec<_>>())
+        .map(|(_, z)| z.sorted_by_key(|(_, _, y)| y).collect::<Vec<_>>())
         .collect();
-    println!("vert={:?}", sides);
+    // println!("vert={:?}", sides);
     ctr += s.len();
     for grp in s.iter() {
         grp.iter().tuple_windows().for_each(|(a, b)| {
@@ -285,9 +280,9 @@ pub fn horizontal_sides(sides: &Vec<(char, usize, usize)>) -> usize {
         .sorted_by_key(|(_, _, x)| x)
         .chunk_by(|(_, _, x)| x)
         .into_iter()
-        .map(|(i, z)| z.sorted_by_key(|(_, y, _)| y).collect::<Vec<_>>())
+        .map(|(_, z)| z.sorted_by_key(|(_, y, _)| y).collect::<Vec<_>>())
         .collect();
-    println!("horiz={:?}", sides);
+    // println!("horiz={:?}", sides);
 
     ctr += s.len();
     for grp in s.iter() {
@@ -305,7 +300,6 @@ pub fn horizontal_sides(sides: &Vec<(char, usize, usize)>) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::collections::HashSet;
 
     #[test]
     fn test_parse() {
