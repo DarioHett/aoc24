@@ -9,6 +9,16 @@ use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
 use std::io::BufRead;
 
+macro_rules! library {
+    ($year:tt $description:literal $($day:tt),*) => {
+        #[doc = concat!("# ", $description)]
+        pub mod $year {$(pub mod $day;)*}
+    }
+}
+
+library!(util "Utility modules to handle common recurring Advent of Code patterns."
+    grid, point
+);
 pub fn start_day(day: &str) {
     println!("Advent of Code 2024 - Day {:0>2}", day);
 }
