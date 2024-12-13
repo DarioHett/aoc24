@@ -56,6 +56,16 @@ impl<T: Copy + PartialEq> Grid<T> {
         };
         self.bytes.iter().position(|&h| h == needle).map(to_point)
     }
+
+    #[inline]
+    pub fn find_all(&self, needle: T) -> Vec<Point> {
+        let to_point = |index| {
+            let x = (index as i32) % self.width;
+            let y = (index as i32) / self.width;
+            Point::new(x, y)
+        };
+        self.bytes.iter().enumerate().filter(|&(_,&h)| h == needle).map(|(i, _)| to_point(i)).collect::<Vec<_>>()
+    }
 }
 
 impl<T: Copy> Grid<T> {
@@ -97,16 +107,33 @@ impl<T> IndexMut<Point> for Grid<T> {
 }
 
 mod tests {
+    use std::fs;
     use super::*;
     #[test]
-    fn test_doc() {
-          let mut grid = Grid::parse("12\n34\n56\n78");
-          let point = Point::new(0, 0);
+    fn test_grid_basic_ops() {
+        let mut grid = Grid::parse("12\n34\n56\n78");
+        let point = Point::new(0, 0);
 
-          let foo = grid[point];
-          assert_eq!(foo, b'1');
+        let foo = grid[point];
+        assert_eq!(foo, b'1');
+        assert_eq!(grid.find('3' as u8).unwrap(), Point { x: 0, y: 1 });
 
-          grid[point] = foo + 1;
-          assert_eq!(grid[point], b'2');
+        grid[point] = foo + 1;
+        assert_eq!(grid[point], b'2');
+        assert_eq!((grid[point] as char), '2');
     }
+
+    #[test]
+    fn test_grid_point_ops() {
+        let mut grid = Grid::parse("11\n22\n33\n44");
+        assert_eq!(grid.find_all('3' as u8).len(), 2);
+
+    }
+
+    #[test]
+    fn test_read_file() {
+        const INPUT_FILE: &str = "input/12.txt";
+        let s = fs::read_to_string(INPUT_FILE).unwrap();
+        let grid = Grid::parse(s.as_str());
+        assert_eq!(grid.width, 140);}
 }
