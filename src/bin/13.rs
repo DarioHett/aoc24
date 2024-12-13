@@ -63,17 +63,34 @@ fn main() -> Result<()> {
     //endregion
 
     //region Part 2
-    // println!("\n=== Part 2 ===");
-    //
-    // fn part2<R: BufRead>(mut reader: R) -> Result<i64> {
-    //     Ok(1)
-    // }
-    //
-    // // assert_eq!(0, part2(BufReader::new(TEST.as_bytes()))?);
-    //
-    // let input_file = BufReader::new(File::open(INPUT_FILE)?);
-    // let result = part2(input_file)?;
-    // println!("Result = {}", result);
+    println!("\n=== Part 2 ===");
+
+    fn part2<R: BufRead>(mut reader: R) -> Result<i64> {
+        let mut input = &mut "".to_string();
+        let _ = reader.read_to_string(input);
+        let mut res = 0;
+        for l in input.split("\n\n") {
+            // May replace w/ regex
+            let (x1, x2, y1, y2, z1, z2) = l
+                .split(|c: char| !c.is_ascii_digit())
+                .filter(|w| !w.is_empty())
+                .map(|w| w.parse().unwrap())
+                .collect_tuple()
+                .unwrap();
+            res += linear_eqn(
+                (x1, x2),
+                (y1, y2),
+                (z1 + 10000000000000, z2 + 10000000000000),
+            );
+        }
+        Ok(res)
+    }
+
+    // assert_eq!(0, part2(BufReader::new(TEST.as_bytes()))?);
+
+    let input_file = BufReader::new(File::open(INPUT_FILE)?);
+    let result = part2(input_file)?;
+    println!("Result = {}", result);
     //endregion
 
     Ok(())
