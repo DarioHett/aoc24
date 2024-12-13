@@ -1,3 +1,4 @@
+use crate::day12::Walls::{Above, Beneath, Left};
 use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
 use std::ops::Mul;
@@ -175,6 +176,131 @@ pub fn component_fencing(
 ) -> usize {
     c.iter().map(|x| size_map.get(&x).unwrap()).sum()
 }
+//  `other` is above.
+fn is_above(plant: &(char, usize, usize), other: &(char, usize, usize)) -> bool {
+    //  `other` is above.
+    (plant.1 == other.1) && (other.2+1 == plant.2)
+}
+fn is_beneath(plant: &(char, usize, usize), other: &(char, usize, usize)) -> bool {
+    (plant.1 == other.1) && (other.2 == plant.2+1)
+}
+fn is_left(plant: &(char, usize, usize), other: &(char, usize, usize)) -> bool {
+    //  `other` is left.
+    (plant.1 == other.1+1) && (other.2 == plant.2)
+}
+
+fn is_right(plant: &(char, usize, usize), other: &(char, usize, usize)) -> bool {
+    (plant.1+1 == other.1) && (other.2 == plant.2)
+}
+
+fn has_right_neighbor(plant: &(char, usize, usize), others: &Vec<(char, usize, usize)>) -> bool {
+    others.into_iter().map(|o| is_right(plant, o)).any(|b| b)
+}
+
+fn has_left_neighbor(plant: &(char, usize, usize), others: &Vec<(char, usize, usize)>) -> bool {
+    others.into_iter().map(|o| is_left(plant, o)).any(|b| b)
+}
+
+fn has_above_neighbor(plant: &(char, usize, usize), others: &Vec<(char, usize, usize)>) -> bool {
+    others.into_iter().map(|o| is_above(plant, o)).any(|b| b)
+}
+
+fn has_beneath_neighbor(plant: &(char, usize, usize), others: &Vec<(char, usize, usize)>) -> bool {
+    others.into_iter().map(|o| is_beneath(plant, o)).any(|b| b)
+}
+
+#[derive(Debug, Hash, Ord, PartialOrd, PartialEq, Eq)]
+pub enum Walls {
+    Above,
+    Beneath,
+    Left,
+    Right,
+}
+pub fn plant_in_component_walls(
+    plant: &(char, usize, usize),
+    component: &Vec<(char, usize, usize)>,
+) -> Vec<Walls> {
+    let mut walls = Vec::new();
+
+    if !has_beneath_neighbor(plant, component) {
+        walls.push(Walls::Beneath);
+    }
+    if !has_above_neighbor(plant, component) {
+        walls.push(Walls::Above);
+    }
+    if !has_left_neighbor(plant, component) {
+        walls.push(Walls::Left);
+    }
+    if !has_right_neighbor(plant, component) {
+        walls.push(Walls::Right);
+    }
+    walls
+}
+
+pub fn component_walls(
+    component: &Vec<(char, usize, usize)>,
+) -> HashMap<Walls, Vec<(char, usize, usize)>> {
+    let mut walls: HashMap<Walls, Vec<(char, usize, usize)>> = HashMap::new();
+    walls.insert(Walls::Above, Vec::new());
+    walls.insert(Walls::Beneath, Vec::new());
+    walls.insert(Walls::Left, Vec::new());
+    walls.insert(Walls::Right, Vec::new());
+    for plant in component {
+        let plant_walls = plant_in_component_walls(plant, component);
+        for wall in plant_walls {
+            let v = walls.get_mut(&wall).unwrap();
+            v.push(*plant)
+        }
+    }
+    walls
+}
+
+pub fn vertical_sides(sides: &Vec<(char, usize, usize)>) -> usize {
+    let mut ctr = 0;
+    // let xs = sides.iter().map(|(c,x,y)| x).dedup().collect::<Vec<(usize)>>();
+    let s: Vec<_> = sides
+        .iter()
+        .sorted_by_key(|(_, x, _)| x)
+        .chunk_by(|(_, x, _)| x)
+        .into_iter()
+        .map(|(i, z)| z.sorted_by_key(|(_, _, y)| y).collect::<Vec<_>>())
+        .collect();
+    println!("vert={:?}", sides);
+    ctr += s.len();
+    for grp in s.iter() {
+        grp.iter().tuple_windows().for_each(|(a, b)| {
+            if (b.2 - a.2) > 1 {
+                ctr += 1
+            }
+        })
+    }
+    ctr
+}
+
+pub fn horizontal_sides(sides: &Vec<(char, usize, usize)>) -> usize {
+    let mut ctr = 0;
+    // let xs = sides.iter().map(|(c,x,y)| x).dedup().collect::<Vec<(usize)>>();
+    let s: Vec<_> = sides
+        .iter()
+        .sorted_by_key(|(_, _, x)| x)
+        .chunk_by(|(_, _, x)| x)
+        .into_iter()
+        .map(|(i, z)| z.sorted_by_key(|(_, y, _)| y).collect::<Vec<_>>())
+        .collect();
+    println!("horiz={:?}", sides);
+
+    ctr += s.len();
+    for grp in s.iter() {
+        // println!("{:?}", grp);
+        grp.iter().tuple_windows().for_each(|(a, b)| {
+            // println!("{:?} {:?}", a,b);
+            if (b.1 - a.1) > 1 {
+                ctr += 1
+            }
+        })
+    }
+    ctr
+}
 
 #[cfg(test)]
 mod tests {
@@ -242,6 +368,61 @@ mod tests {
     }
 
     #[test]
+    fn test_plant_walls() {
+        let input = "AAD\nAAD\nCCC";
+        let grid = input
+            .lines()
+            .enumerate()
+            .map(|(i, l)| parse_line(l, i))
+            .collect::<Vec<_>>();
+        let map = grid_to_map(&grid);
+        let cs = components(&map);
+        let c = cs.iter().next().unwrap();
+        println!("{:?}", c);
+
+        println!("{:?}", plant_in_component_walls(&c[0], c));
+        // assert_eq!(cs, vec![vec![('D', 1, 0), ('D', 2, 0), ('D', 2, 1)], vec![('A', 0, 0), ('A', 0, 1), ('A', 1, 1)], vec![('C', 0, 2), ('C', 1, 2), ('C', 2, 2)]]);
+    }
+
+    #[test]
+    fn test_component_walls() {
+        let input = "AAD\nAAD\nCCC";
+        let grid = input
+            .lines()
+            .enumerate()
+            .map(|(i, l)| parse_line(l, i))
+            .collect::<Vec<_>>();
+        let map = grid_to_map(&grid);
+        let cs = components(&map);
+        let c = cs.iter().next().unwrap();
+        println!("{:?}", component_walls(&c));
+        // assert_eq!(cs, vec![vec![('D', 1, 0), ('D', 2, 0), ('D', 2, 1)], vec![('A', 0, 0), ('A', 0, 1), ('A', 1, 1)], vec![('C', 0, 2), ('C', 1, 2), ('C', 2, 2)]]);
+    }
+
+    #[test]
+    fn test_component_wall_counts() {
+        let input = "AAD\nAAD\nCCC";
+        let grid = input
+            .lines()
+            .enumerate()
+            .map(|(i, l)| parse_line(l, i))
+            .collect::<Vec<_>>();
+        let map = grid_to_map(&grid);
+        let cs = components(&map);
+        let c = cs.iter().next().unwrap();
+        let cwall_map = component_walls(&c);
+        let mut ctr = 0;
+        cwall_map.iter().for_each(|(w, ps)| match w {
+            Walls::Above => ctr += horizontal_sides(ps),
+            Walls::Beneath => ctr += horizontal_sides(ps),
+            Walls::Left => ctr += vertical_sides(ps),
+            Walls::Right => ctr += vertical_sides(ps),
+        });
+        println!("{:?}", cwall_map);
+        println!("{:?}", ctr);
+        // assert_eq!(cs, vec![vec![('D', 1, 0), ('D', 2, 0), ('D', 2, 1)], vec![('A', 0, 0), ('A', 0, 1), ('A', 1, 1)], vec![('C', 0, 2), ('C', 1, 2), ('C', 2, 2)]]);
+    }
+    #[test]
     fn test_component_sizes() {
         let input = "AAD\nAAD\nCCC";
         let grid = input
@@ -268,6 +449,30 @@ mod tests {
         println!("{:?}", cs);
         assert_eq!(cs, vec![24, 32, 12]);
         // assert_eq!(cs, vec![vec![('D', 1, 0), ('D', 2, 0), ('D', 2, 1)], vec![('A', 0, 0), ('A', 0, 1), ('A', 1, 1)], vec![('C', 0, 2), ('C', 1, 2), ('C', 2, 2)]]);
+    }
+
+    #[test]
+    fn test_vertical_sides() {
+        let sides = vec![('D', 2usize, 0usize), ('D', 4, 0), ('D', 2, 3), ('D', 2, 1)];
+        let mut ctr = 0;
+        // let xs = sides.iter().map(|(c,x,y)| x).dedup().collect::<Vec<(usize)>>();
+        let s: Vec<_> = sides
+            .iter()
+            .sorted_by_key(|(_, x, _)| x)
+            .chunk_by(|(_, x, _)| x)
+            .into_iter()
+            .map(|(i, z)| z.sorted_by_key(|(_, _, y)| y).collect::<Vec<_>>())
+            .collect();
+        println!("{:?}", s);
+        ctr += s.len();
+        for grp in s.iter() {
+            grp.iter().tuple_windows().for_each(|(a, b)| {
+                if (b.2 - a.2) > 1 {
+                    ctr += 1
+                }
+            })
+        }
+        println!("{:?}", ctr);
     }
 
     #[test]
