@@ -1,8 +1,7 @@
 use anyhow::*;
+use aoc24::util::grid::Grid;
 use aoc24::*;
-use itertools::Itertools;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::fs;
 
 const DAY: &str = "14";
 const INPUT_FILE: &str = "input/14.txt";
@@ -16,12 +15,13 @@ fn main() -> Result<()> {
     println!("=== Part 1 ===");
 
     fn part1(input: &str) -> Result<i64> {
+        let _ = Grid::parse(input);
         Ok(1)
     }
 
-    assert_eq!(0, part1(TEST));;
+    assert_eq!(0, part1(TEST)?);
 
-    let input_file = fs::read_to_string(INPUT_FILE).unwrap();
+    let input_file = fs::read_to_string(INPUT_FILE)?;
 
     let result = part1(input_file.as_str())?;
     println!("Result = {}", result);
