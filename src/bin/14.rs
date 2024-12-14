@@ -2,6 +2,7 @@ use anyhow::*;
 use aoc24::util::grid::Grid;
 use aoc24::*;
 use std::fs;
+use std::io::{stdin, stdout, Write};
 use std::ops::Rem;
 use itertools::Itertools;
 
@@ -59,6 +60,17 @@ pub fn determine_quadrant(x: &isize, y: &isize, max_x: &isize, max_y: &isize) ->
     }
 }
 
+pub fn make_grid(robots: &Vec<(isize, isize)>, max_x: &isize, max_y: &isize) -> String {
+    let mut grid = vec![vec!['.'; *max_x as usize]; *max_y as usize];
+    for (x,y) in robots {
+        grid[*y as usize][*x as usize] = '#'
+    }
+    grid.iter_mut().map(|mut row| {
+        row.push('\n');
+        row.iter().collect::<String>()
+    }).collect()
+}
+
 fn main() -> Result<()> {
     start_day(DAY);
 
@@ -81,12 +93,10 @@ fn main() -> Result<()> {
         while seconds > 0 {
             seconds -= 1;
             for (x,y,dx,dy) in robots.iter_mut() {
-                let (new_x, new_y) = after_one_second(x,y,dx,dy, width, height);
-                *x = new_x;
-                *y = new_y;
+                (*x, *y) = after_one_second(x,y,dx,dy, width, height);
             }
-            println!("{:?}", robots);
         }
+        println!("{:?}", robots);
 
         let map = robots.iter().map(|(x,y,_,_)| (determine_quadrant(x,y,width,height), (x,y))).into_group_map();
         println!("{:?}", map);
@@ -104,15 +114,49 @@ fn main() -> Result<()> {
     //endregion
 
     //region Part 2
-    // println!("\n=== Part 2 ===");
-    //
-    // fn part2<R: BufRead>(mut reader: R) -> Result<i64> {
-    //     Ok(1)
-    // }
+    println!("\n=== Part 2 ===");
+
+    fn part2(input: &str) -> Result<usize> {
+        let width: &isize = &101;
+        let height: &isize = &103;
+        let mut robots: Vec<(isize, isize, isize, isize)> = Vec::new();
+        for l in input.split("\n") {
+            let vs = l.replace("p=", "").replace(" v=", ",").split(',')
+                .map(|p| p.parse::<isize>().unwrap())
+                .collect_tuple().unwrap();
+            robots.push(vs);
+        }
+        // println!("{:?}", robots);
+
+        let mut seconds = 0;
+        while seconds < 10_000 {
+            if seconds > 1_000 {
+            let coords = robots.iter().cloned().map(|(x, y, _, _)| (x, y)).collect::<Vec<(isize, isize)>>();
+            let grid = make_grid(&coords, width, height);
+                if grid.contains("###############") {
+                    return Ok(seconds);
+            // for l in grid.split('\n') {
+            //     println!("{:?}", l);
+            // }
+            //     print!("Step: {:?}\n", seconds);
+            //     let _=stdout().flush();
+            //     let mut s = String::new();
+            //     stdin().read_line(&mut s).expect("Did not enter a correct string");
+        }}
+        for (x,y,dx,dy) in robots.iter_mut() {
+                (*x, *y) = after_one_second(x,y,dx,dy, width, height);
+            }
+            seconds += 1;
+
+        }
+        println!("{:?}", robots);
+
+        Ok(1)
+    }
     //
     // assert_eq!(0, part2(TEST));;
-    // let result = part2(input_file.as_str())?;
-    // println!("Result = {}", result);
+    let res = part2(input_file.as_str())?;
+    println!("Result = {}", res);
     //endregion
 
     Ok(())
