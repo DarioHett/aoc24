@@ -44,6 +44,11 @@ impl Grid<u8> {
         raw.iter().for_each(|slice| bytes.extend_from_slice(slice));
         Grid { width, height, bytes }
     }
+
+    pub fn to_str(&self) -> String {
+        self.bytes.chunks_exact(self.width as usize).map(|row| {
+            String::from_utf8(row.to_vec()).unwrap()}).collect::<Vec<_>>().join("\n")
+    }
 }
 
 impl<T: Copy + PartialEq> Grid<T> {
@@ -125,7 +130,7 @@ mod tests {
 
     #[test]
     fn test_grid_point_ops() {
-        let mut grid = Grid::parse("11\n22\n33\n44");
+        let grid = Grid::parse("11\n22\n33\n44");
         assert_eq!(grid.find_all('3' as u8).len(), 2);
 
     }

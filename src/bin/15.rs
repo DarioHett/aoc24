@@ -1,4 +1,5 @@
 use anyhow::*;
+use aoc24::day15::*;
 use aoc24::*;
 use std::fs;
 
@@ -33,8 +34,27 @@ fn main() -> Result<()> {
     //region Part 1
     println!("=== Part 1 ===");
 
-    fn part1(input: &str) -> Result<usize> {
-        Ok(1)
+    fn part1(input: &str) -> Result<i32> {
+        let (grid, dirs) = grid_and_moves(input);
+        let mut new_grid = grid.clone();
+        for (i, direction) in dirs.iter().enumerate() {
+            // println!("STEP {}",i);
+            // for l in new_grid.to_str().lines() {
+            //     println!("{}", l);
+            // }
+            if can_move(find_robot(&new_grid), direction, &new_grid) {
+                new_grid = apply_moves(
+                    moves(find_robot(&new_grid), direction, &new_grid),
+                    direction,
+                    &new_grid,
+                );
+            } else {
+                continue;
+            }
+        }
+        let pts = new_grid.find_all(b'O');
+        let res = pts.into_iter().map(|p| p.x + p.y * 100).sum();
+        Ok(res)
     }
 
     assert_eq!(10092, part1(TEST)?);
