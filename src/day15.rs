@@ -1,5 +1,6 @@
 use crate::util::grid::Grid;
-use crate::util::point::Point;
+use crate::util::point::{Point, DOWN, LEFT, RIGHT, UP};
+use itertools::Itertools;
 
 pub fn grid_and_moves(input: &str) -> (Grid<u8>, Vec<Point>) {
     let mut grid_str: String = String::new();
@@ -42,6 +43,48 @@ pub fn can_move(loc: Point, direction: &Point, grid: &Grid<u8>) -> bool {
     }
 }
 
+pub fn can_move2(loc: Point, direction: &Point, grid: &Grid<u8>) -> bool {
+    if grid[loc + *direction] == b'.' {
+        true
+    } else if grid[loc + *direction] == b'#' {
+        false
+    } else if grid[loc + *direction] == b'[' {
+        can_move2(loc + *direction, direction, grid)
+            && can_move2(loc + *direction + RIGHT, direction, grid)
+    } else {
+        can_move2(loc + *direction, direction, grid)
+            && can_move2(loc + *direction + LEFT, direction, grid)
+    }
+}
+
+pub fn can_move_ping(loc: Point, direction: &Point, grid: &Grid<u8>) -> bool {
+    if grid[loc + *direction] == b'.' {
+        true
+    } else if grid[loc + *direction] == b'#' {
+        false
+    } else if grid[loc + *direction] == b'[' {
+        crate::day15::can_move_ping(loc + *direction, direction, grid)
+            && crate::day15::can_move_pong(loc + *direction + RIGHT, direction, grid)
+    } else {
+        crate::day15::can_move_ping(loc + *direction, direction, grid)
+            && crate::day15::can_move_pong(loc + *direction + LEFT, direction, grid)
+    }
+}
+
+pub fn can_move_pong(loc: Point, direction: &Point, grid: &Grid<u8>) -> bool {
+    if grid[loc + *direction] == b'.' {
+        true
+    } else if grid[loc + *direction] == b'#' {
+        false
+    } else if grid[loc + *direction] == b'[' && (direction == &UP || direction == &DOWN) {
+        can_move_ping(loc + *direction, direction, grid) && can_move_ping(loc + *direction + RIGHT, direction, grid)
+    } else if grid[loc + *direction] == b']' && (direction == &UP || direction == &DOWN) {
+        can_move_ping(loc + *direction, direction, grid) && can_move_ping(loc + *direction + LEFT, direction, grid)
+    } else {
+        can_move_ping(loc + *direction, direction, grid)
+    }
+}
+
 pub fn moves(loc: Point, direction: &Point, grid: &Grid<u8>) -> Vec<Point> {
     // Should use `Option` instead
     let mut accumulator = vec![];
@@ -57,6 +100,172 @@ pub fn moves(loc: Point, direction: &Point, grid: &Grid<u8>) -> Vec<Point> {
             }
             accumulator.push(loc);
         }
+        accumulator
+    }
+}
+
+pub fn moves2(loc: Point, direction: &Point, grid: &Grid<u8>) -> Vec<Point> {
+    // Should use `Option` instead
+    let mut accumulator = vec![];
+    if grid[loc + *direction] == b'.' {
+        vec![loc]
+    } else if grid[loc + *direction] == b'#' {
+        vec![]
+    } else if grid[loc + *direction] == b']' && (*direction == UP) || (*direction == DOWN) {
+        let left_pts = moves2(loc + *direction + LEFT, direction, grid);
+        let pts = moves(loc + *direction, direction, grid);
+        if pts.len() > 0 && left_pts.len() > 0 {
+            for pt in pts.iter().cloned() {
+                accumulator.push(pt);
+            }
+            for pt in left_pts.iter().cloned() {
+                accumulator.push(pt);
+            }
+            accumulator.push(loc);
+        }
+        accumulator
+    } else if grid[loc + *direction] == b'[' && (*direction == UP) || (*direction == DOWN) {
+        let right_pts = moves2(loc + *direction + RIGHT, direction, grid);
+        let pts = moves2(loc + *direction, direction, grid);
+        if pts.len() > 0 && right_pts.len() > 0 {
+            for pt in pts.iter().cloned() {
+                accumulator.push(pt);
+            }
+            for pt in right_pts.iter().cloned() {
+                accumulator.push(pt);
+            }
+            accumulator.push(loc);
+        }
+        accumulator
+    } else {
+        let pts = moves(loc + *direction, direction, grid);
+        if pts.len() > 0 {
+            for pt in moves(loc + *direction, direction, grid).iter().cloned() {
+                accumulator.push(pt);
+            }
+            accumulator.push(loc);
+        }
+        accumulator
+    }
+}
+
+pub fn moves_ping(loc: Point, direction: &Point, grid: &Grid<u8>) -> Vec<Point> {
+    // Should use `Option` instead
+    let mut accumulator = vec![];
+    if grid[loc + *direction] == b'.' {
+        vec![loc]
+    } else if grid[loc + *direction] == b'#' {
+        vec![]
+    } else if grid[loc + *direction] == b']' && ((*direction == UP) || (*direction == DOWN)) {
+        let left_pts = moves_ping(loc + *direction + LEFT, direction, grid);
+        let pts = moves_ping(loc + *direction, direction, grid);
+        if pts.len() > 0 && left_pts.len() > 0 {
+            for pt in pts.iter().interleave(left_pts.iter()).cloned() {
+                if !accumulator.contains(&pt) {accumulator.push(pt);}
+            }
+            if !accumulator.contains(&loc) {accumulator.push(loc);}
+            }
+            accumulator.dedup();
+            accumulator
+    } else if grid[loc + *direction] == b'[' && ((*direction == UP) || (*direction == DOWN)) {
+        let left_pts = moves_ping(loc + *direction + RIGHT, direction, grid);
+        let pts = moves_ping(loc + *direction, direction, grid);
+        if pts.len() > 0 && left_pts.len() > 0 {
+            for pt in pts.iter().interleave(left_pts.iter()).cloned() {
+                if !accumulator.contains(&pt) {accumulator.push(pt);}
+            }
+            accumulator.push(loc);
+        }
+        accumulator.dedup();
+        accumulator
+    } else {
+        let pts = moves_ping(loc + *direction, direction, grid);
+        if pts.len() > 0 {
+            for pt in moves_ping(loc + *direction, direction, grid)
+                .iter()
+                .cloned()
+            {
+                if !accumulator.contains(&pt) {accumulator.push(pt);}
+            }
+            if !accumulator.contains(&loc) {accumulator.push(loc);}
+        }
+        accumulator.dedup();
+        accumulator
+    }
+}
+
+pub fn moves_pong2(loc: Point, direction: &Point, grid: &Grid<u8>) -> Vec<Point> {
+    let mut accumulator = vec![];
+    if grid[loc + *direction] == b'.' {
+        vec![loc]
+    } else if grid[loc + *direction] == b'#' {
+        vec![]
+    } else if grid[loc + *direction] == b']' && ((*direction == UP) || (*direction == DOWN)) {
+        let mut left_pts = Vec::new();
+        if grid[loc] != grid[loc + *direction] {
+            for pt in moves_ping(loc + *direction + LEFT, direction, grid)
+                .iter()
+                .cloned()
+            {
+                left_pts.push(pt);
+            }
+        };
+        let pts = moves_pong2(loc + *direction, direction, grid);
+        if pts.len() > 0 && left_pts.len() > 0 {
+            for pt in pts.iter().interleave(left_pts.iter()).cloned() {
+                accumulator.push(pt);
+            }
+            accumulator.push(loc);
+        }
+        accumulator.dedup();
+        accumulator
+    } else if grid[loc + *direction] == b'[' && ((*direction == UP) || (*direction == DOWN)) {
+        let mut right_pts = Vec::new();
+        if grid[loc] != grid[loc + *direction] {
+            for pt in moves_ping(loc + *direction + RIGHT, direction, grid) {
+                right_pts.push(pt);
+            }
+        };
+        let pts = moves_pong2(loc + *direction, direction, grid);
+        if pts.len() > 0 && right_pts.len() > 0 {
+            for pt in pts.iter().interleave(right_pts.iter()).cloned() {
+                accumulator.push(pt);
+            }
+            accumulator.push(loc);
+        }
+        accumulator.dedup();
+        accumulator
+    } else {
+        let pts = moves_ping(loc + *direction, direction, grid);
+        if pts.len() > 0 {
+            for pt in moves_ping(loc + *direction, direction, grid)
+                .iter()
+                .cloned()
+            {
+                accumulator.push(pt);
+            }
+            accumulator.push(loc);
+        }
+        accumulator.dedup();
+        accumulator
+    }
+}
+pub fn moves_pong(loc: Point, direction: &Point, grid: &Grid<u8>) -> Vec<Point> {
+    // Should use `Option` instead
+    let mut accumulator = vec![];
+    if grid[loc + *direction] == b'.' {
+        vec![loc]
+    } else if grid[loc + *direction] == b'#' {
+        vec![]
+    } else {
+        let pts = moves_ping(loc + *direction, direction, grid);
+        if pts.len() > 0 {
+            for pt in pts.iter().cloned() {
+                accumulator.push(pt);
+            }
+            accumulator.push(loc);
+        }
+        accumulator.dedup();
         accumulator
     }
 }

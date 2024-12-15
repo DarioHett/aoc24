@@ -37,11 +37,7 @@ fn main() -> Result<()> {
     fn part1(input: &str) -> Result<i32> {
         let (grid, dirs) = grid_and_moves(input);
         let mut new_grid = grid.clone();
-        for (i, direction) in dirs.iter().enumerate() {
-            // println!("STEP {}",i);
-            // for l in new_grid.to_str().lines() {
-            //     println!("{}", l);
-            // }
+        for (_i, direction) in dirs.iter().enumerate() {
             if can_move(find_robot(&new_grid), direction, &new_grid) {
                 new_grid = apply_moves(
                     moves(find_robot(&new_grid), direction, &new_grid),
@@ -66,15 +62,38 @@ fn main() -> Result<()> {
     //endregion
 
     //region Part 2
-    // println!("\n=== Part 2 ===");
-    //
-    // fn part2(input: &str) -> Result<usize> {
-    //     Ok(1)
-    // }
-    // //
-    // assert_eq!(0, part2(TEST));;
-    // let res = part2(input_file.as_str())?;
-    // println!("Result = {}", res);
+    println!("\n=== Part 2 ===");
+
+    fn part2(input: &str) -> Result<i32> {
+        let binding = input
+            .replace("#", "##")
+            .replace("O", "[]")
+            .replace(".", "..")
+            .replace("@", "@.");
+        let input = binding.as_str();
+        let (grid, dirs) = grid_and_moves(input);
+        let mut new_grid = grid.clone();
+        for (_i, direction) in dirs.iter().enumerate() {
+
+            if can_move_ping(find_robot(&new_grid), direction, &new_grid) {
+                let mvs = moves_ping(find_robot(&new_grid), direction, &new_grid);
+                new_grid = apply_moves(mvs, direction, &new_grid);
+            } else {
+                continue;
+            }
+        }
+        println!("Final");
+        for l in new_grid.to_str().lines() {
+            println!("{}", l);
+        }
+        let pts = new_grid.find_all(b'[');
+        let res = pts.into_iter().map(|p| p.x + p.y * 100).sum();
+        Ok(res)
+    }
+
+    assert_eq!(9021, part2(TEST)?);
+    let res = part2(input_file.as_str())?;
+    println!("Result = {}", res);
     //endregion
 
     Ok(())
