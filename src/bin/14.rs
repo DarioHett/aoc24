@@ -1,9 +1,7 @@
 use anyhow::*;
-use aoc24::util::grid::Grid;
 use aoc24::*;
 use itertools::Itertools;
 use std::fs;
-use std::io::{stdin, stdout, Write};
 use std::ops::Rem;
 
 const DAY: &str = "14";
@@ -44,9 +42,9 @@ pub fn determine_quadrant(x: &isize, y: &isize, max_x: &isize, max_y: &isize) ->
     let mid_y = max_y / 2;
     if x == &mid_x {
         q += 0;
-    } else if (x < &mid_x) {
+    } else if x < &mid_x {
         q += 2;
-    } else if (x > &mid_x) {
+    } else if x > &mid_x {
         q += 3;
     }
     if y == &mid_y {
