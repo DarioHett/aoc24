@@ -39,7 +39,7 @@ fn main() -> Result<()> {
     println!("=== Part 1 ===");
 
     fn part1<R: BufRead>(mut reader: R) -> Result<i64> {
-        let mut input = &mut "".to_string();
+        let input = &mut "".to_string();
         let _ = reader.read_to_string(input);
         let mut res = 0;
         for l in input.split("\n\n") {
@@ -66,7 +66,7 @@ fn main() -> Result<()> {
     println!("\n=== Part 2 ===");
 
     fn part2<R: BufRead>(mut reader: R) -> Result<i64> {
-        let mut input = &mut "".to_string();
+        let input = &mut "".to_string();
         let _ = reader.read_to_string(input);
         let mut res = 0;
         for l in input.split("\n\n") {

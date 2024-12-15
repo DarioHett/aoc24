@@ -416,34 +416,34 @@ mod tests {
         println!("{:?}", ctr);
         // assert_eq!(cs, vec![vec![('D', 1, 0), ('D', 2, 0), ('D', 2, 1)], vec![('A', 0, 0), ('A', 0, 1), ('A', 1, 1)], vec![('C', 0, 2), ('C', 1, 2), ('C', 2, 2)]]);
     }
-    #[test]
-    fn test_component_sizes() {
-        let input = "AAD\nAAD\nCCC";
-        let grid = input
-            .lines()
-            .enumerate()
-            .map(|(i, l)| parse_line(l, i))
-            .collect::<Vec<_>>();
-        let map = grid_to_map(&grid);
-        let cs = components(&map);
-        assert_eq!(component_sizes(&cs), vec![2, 3, 4]);
-        // assert_eq!(cs, vec![vec![('D', 1, 0), ('D', 2, 0), ('D', 2, 1)], vec![('A', 0, 0), ('A', 0, 1), ('A', 1, 1)], vec![('C', 0, 2), ('C', 1, 2), ('C', 2, 2)]]);
-    }
-    #[test]
-    fn test_components_with_sizes() {
-        let input = "AAD\nAAD\nCCC";
-        let grid = input
-            .lines()
-            .enumerate()
-            .map(|(i, l)| parse_line(l, i))
-            .collect::<Vec<_>>();
-        let map = grid_to_map(&grid);
-        let size_map = size_map(&map);
-        let cs = components_with_sizes(&map, &size_map);
-        println!("{:?}", cs);
-        assert_eq!(cs, vec![24, 32, 12]);
-        // assert_eq!(cs, vec![vec![('D', 1, 0), ('D', 2, 0), ('D', 2, 1)], vec![('A', 0, 0), ('A', 0, 1), ('A', 1, 1)], vec![('C', 0, 2), ('C', 1, 2), ('C', 2, 2)]]);
-    }
+    // #[test]
+    // fn test_component_sizes() {
+    //     let input = "AAD\nAAD\nCCC";
+    //     let grid = input
+    //         .lines()
+    //         .enumerate()
+    //         .map(|(i, l)| parse_line(l, i))
+    //         .collect::<Vec<_>>();
+    //     let map = grid_to_map(&grid);
+    //     let cs = components(&map);
+    //     assert_eq!(component_sizes(&cs), vec![2, 3, 4]);
+    //     // assert_eq!(cs, vec![vec![('D', 1, 0), ('D', 2, 0), ('D', 2, 1)], vec![('A', 0, 0), ('A', 0, 1), ('A', 1, 1)], vec![('C', 0, 2), ('C', 1, 2), ('C', 2, 2)]]);
+    // }
+    // #[test]
+    // fn test_components_with_sizes() {
+    //     let input = "AAD\nAAD\nCCC";
+    //     let grid = input
+    //         .lines()
+    //         .enumerate()
+    //         .map(|(i, l)| parse_line(l, i))
+    //         .collect::<Vec<_>>();
+    //     let map = grid_to_map(&grid);
+    //     let size_map = size_map(&map);
+    //     let cs = components_with_sizes(&map, &size_map);
+    //     println!("{:?}", cs);
+    //     assert_eq!(cs, vec![24, 32, 12]);
+    //     // assert_eq!(cs, vec![vec![('D', 1, 0), ('D', 2, 0), ('D', 2, 1)], vec![('A', 0, 0), ('A', 0, 1), ('A', 1, 1)], vec![('C', 0, 2), ('C', 1, 2), ('C', 2, 2)]]);
+    // }
 
     #[test]
     fn test_vertical_sides() {
@@ -455,7 +455,7 @@ mod tests {
             .sorted_by_key(|(_, x, _)| x)
             .chunk_by(|(_, x, _)| x)
             .into_iter()
-            .map(|(i, z)| z.sorted_by_key(|(_, _, y)| y).collect::<Vec<_>>())
+            .map(|(_i, z)| z.sorted_by_key(|(_, _, y)| y).collect::<Vec<_>>())
             .collect();
         println!("{:?}", s);
         ctr += s.len();

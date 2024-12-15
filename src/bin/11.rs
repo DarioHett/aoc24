@@ -22,7 +22,7 @@ fn main() -> Result<()> {
         let mut cache = LruCache::new(NonZeroUsize::new(10_000_000).unwrap());
         Ok(v.into_iter()
             .enumerate()
-            .map(|(a, i)| {
+            .map(|(_a, i)| {
                 // println!("{:?}", a);
                 apply_rules_recur(i, 25, &mut cache)
             })
@@ -46,7 +46,7 @@ fn main() -> Result<()> {
 
         Ok(v.into_iter()
             .enumerate()
-            .map(|(a, i)| {
+            .map(|(_a, i)| {
                 // println!("{:?}", a);
                 apply_rules_recur(i, 75, &mut cache)
             })
