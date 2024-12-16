@@ -5,6 +5,7 @@ pub mod day10;
 pub mod day11;
 pub mod day12;
 pub mod day15;
+pub mod day16;
 
 use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
