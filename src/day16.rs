@@ -16,7 +16,15 @@ pub fn rotate_counter_clockwise(direction: &mut Point, dirs: &mut Vec<Point>) {
     }
 }
 
-pub fn search(position: Point, direction: Point, cost: i32, mut path: Vec<Point>, map: &Grid<u8>, rotations: u8, current_cost: &mut i32) -> i32 {
+pub fn search(
+    position: Point,
+    direction: Point,
+    cost: i32,
+    mut path: Vec<Point>,
+    map: &Grid<u8>,
+    rotations: u8,
+    current_cost: &mut i32,
+) -> i32 {
     if cost > *current_cost {
         return *current_cost;
     }
@@ -25,34 +33,73 @@ pub fn search(position: Point, direction: Point, cost: i32, mut path: Vec<Point>
         if cost < *current_cost {
             *current_cost = cost;
         }
-        return cost
+        return cost;
     };
-    if (path.contains(&(position)) || path.contains(&(position+direction)) || map[position] == b'#') {
-        return i32::MAX
+    if (path.contains(&(position))
+        || path.contains(&(position + direction))
+        || map[position] == b'#')
+    {
+        return i32::MAX;
     };
     println!("Position: {:?}", position);
     let mut new_path = path.clone();
     path.push(position);
     if rotations < 4 {
-        search(position+direction, direction, cost+1, path, map, 0, current_cost
-        ).min(
-            search(position, direction.clockwise(), cost+1000, new_path.clone(), map, rotations+1, current_cost)
-        ).min(
-            search(position, direction.clockwise().clockwise(), cost+2000, new_path.clone(), map, rotations+2, current_cost)
-        ).min(
-            search(position, direction.counter_clockwise(), cost+1000, new_path.clone(), map, rotations+1, current_cost)
+        search(
+            position + direction,
+            direction,
+            cost + 1,
+            path,
+            map,
+            0,
+            current_cost,
         )
-    }
-    else {
+        .min(search(
+            position,
+            direction.clockwise(),
+            cost + 1000,
+            new_path.clone(),
+            map,
+            rotations + 1,
+            current_cost,
+        ))
+        .min(search(
+            position,
+            direction.clockwise().clockwise(),
+            cost + 2000,
+            new_path.clone(),
+            map,
+            rotations + 2,
+            current_cost,
+        ))
+        .min(search(
+            position,
+            direction.counter_clockwise(),
+            cost + 1000,
+            new_path.clone(),
+            map,
+            rotations + 1,
+            current_cost,
+        ))
+    } else {
         i32::MAX
     }
 }
 
-pub fn search_w_lookup(position: Point, direction: Point, cost: i32, mut path: Vec<Point>, map: &Grid<u8>, rotations: u8, current_cost: &mut i32, cost_grid: &mut Grid<[i32; 22]>) -> i32 {
-    if cost_grid[position][((direction.x+1)+(direction.y+1)*10) as usize] < cost {
-        return i32::MAX
+pub fn search_w_lookup(
+    position: Point,
+    direction: Point,
+    cost: i32,
+    mut path: Vec<Point>,
+    map: &Grid<u8>,
+    rotations: u8,
+    current_cost: &mut i32,
+    cost_grid: &mut Grid<[i32; 22]>,
+) -> i32 {
+    if cost_grid[position][((direction.x + 1) + (direction.y + 1) * 10) as usize] < cost {
+        return i32::MAX;
     } else {
-        cost_grid[position][((direction.x+1)+(direction.y+1)*10) as usize] = cost;
+        cost_grid[position][((direction.x + 1) + (direction.y + 1) * 10) as usize] = cost;
     }
     if cost > *current_cost {
         return *current_cost;
@@ -62,37 +109,151 @@ pub fn search_w_lookup(position: Point, direction: Point, cost: i32, mut path: V
         if cost < *current_cost {
             *current_cost = cost;
         }
-        return cost
+        return cost;
     };
-    if (path.contains(&(position)) || path.contains(&(position+direction)) || map[position] == b'#') {
-        return i32::MAX
+    if (path.contains(&(position))
+        || path.contains(&(position + direction))
+        || map[position] == b'#')
+    {
+        return i32::MAX;
     };
     // println!("Position: {:?}", position);
     let mut new_path = path.clone();
     path.push(position);
     if rotations < 3 {
-        crate::day16::search_w_lookup(position+direction, direction, cost+1, path, map, 0, current_cost, cost_grid
-        ).min(
-            crate::day16::search_w_lookup(position, direction.clockwise(), cost+1000, new_path.clone(), map, rotations+1, current_cost, cost_grid)
-        ).min(
-            crate::day16::search_w_lookup(position, direction.clockwise().clockwise(), cost+2000, new_path.clone(), map, rotations+2, current_cost, cost_grid)
-        ).min(
-            crate::day16::search_w_lookup(position, direction.counter_clockwise(), cost+1000, new_path.clone(), map, rotations+1, current_cost, cost_grid)
+        crate::day16::search_w_lookup(
+            position + direction,
+            direction,
+            cost + 1,
+            path,
+            map,
+            0,
+            current_cost,
+            cost_grid,
         )
+        .min(crate::day16::search_w_lookup(
+            position,
+            direction.clockwise(),
+            cost + 1000,
+            new_path.clone(),
+            map,
+            rotations + 1,
+            current_cost,
+            cost_grid,
+        ))
+        .min(crate::day16::search_w_lookup(
+            position,
+            direction.clockwise().clockwise(),
+            cost + 2000,
+            new_path.clone(),
+            map,
+            rotations + 2,
+            current_cost,
+            cost_grid,
+        ))
+        .min(crate::day16::search_w_lookup(
+            position,
+            direction.counter_clockwise(),
+            cost + 1000,
+            new_path.clone(),
+            map,
+            rotations + 1,
+            current_cost,
+            cost_grid,
+        ))
+    } else {
+        i32::MAX
     }
-    else {
+}
+
+pub fn search_w_lookup_and_marking(
+    position: Point,
+    direction: Point,
+    cost: i32,
+    mut path: Vec<Point>,
+    map: &Grid<u8>,
+    rotations: u8,
+    cost_grid: &mut Grid<[i32; 22]>,
+    mark_grid: &mut Grid<i32>,
+) -> i32 {
+    if cost_grid[position][((direction.x + 1) + (direction.y + 1) * 10) as usize] < cost {
+        return i32::MAX;
+    } else {
+        cost_grid[position][((direction.x + 1) + (direction.y + 1) * 10) as usize] = cost;
+    }
+    if cost > 102460 {
+        return 102460;
+    }
+    if (map[position] == b'E') {
+        println!("FOUND E, COST: {:?}.", cost);
+        for p in path.iter() {
+            mark_grid[*p] = 1;
+        }
+        return cost;
+    };
+    if (path.contains(&(position))
+        || path.contains(&(position + direction))
+        || map[position] == b'#')
+    {
+        return i32::MAX;
+    };
+    // println!("Position: {:?}", position);
+    let mut new_path = path.clone();
+    path.push(position);
+    if rotations < 3 {
+        crate::day16::search_w_lookup_and_marking(
+            position + direction,
+            direction,
+            cost + 1,
+            path,
+            map,
+            0,
+            cost_grid,
+            mark_grid,
+        )
+        .min(crate::day16::search_w_lookup_and_marking(
+            position,
+            direction.clockwise(),
+            cost + 1000,
+            new_path.clone(),
+            map,
+            rotations + 1,
+            cost_grid,
+            mark_grid,
+        ))
+        .min(crate::day16::search_w_lookup_and_marking(
+            position,
+            direction.clockwise().clockwise(),
+            cost + 2000,
+            new_path.clone(),
+            map,
+            rotations + 2,
+            cost_grid,
+            mark_grid,
+        ))
+        .min(crate::day16::search_w_lookup_and_marking(
+            position,
+            direction.counter_clockwise(),
+            cost + 1000,
+            new_path.clone(),
+            map,
+            rotations + 1,
+            cost_grid,
+            mark_grid,
+        ))
+    } else {
         i32::MAX
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use std::cmp::min;
-    use std::fs::Permissions;
     use super::*;
     use crate::util::grid::Grid;
     use crate::util::point;
     use crate::util::point::{Point, DOWN, LEFT, RIGHT, UP};
+    use std::cmp::min;
+    use std::fs::Permissions;
 
     #[test]
     fn test() {
@@ -119,37 +280,28 @@ mod tests {
         let direction = &mut RIGHT;
         let permissible_directions = &mut [RIGHT, UP, DOWN];
 
-
         let _ = direction.mut_clockwise();
         assert_eq!(*direction, DOWN);
         let _ = direction.mut_counter_clockwise();
         assert_eq!(*direction, RIGHT);
 
-        let current_cost = &mut (i32::MAX-1);
-
+        let current_cost = &mut (i32::MAX - 1);
 
         let mut path = Vec::new();
-        let i  = search(*position, *direction, 0, path, &grid, 0, current_cost);
-        println!("{:?}",current_cost);
+        let i = search(*position, *direction, 0, path, &grid, 0, current_cost);
+        println!("{:?}", current_cost);
         assert_eq!(7036, *current_cost);
-
-
     }
-        // for d in permissible_directions.iter() {
-        //     if grid[*position + *d] == b'.' {
-        //         explorable.push(*d);
-        //     }
-        // }
-        //
-        //
-        // while explorable.len() > 0 {
-        //     let next_direction = explorable.pop().unwrap();
-        //     if *direction == next_direction {
-        //         current_cost += 1
-        //     }
-
-        }
-
-
-
-
+    // for d in permissible_directions.iter() {
+    //     if grid[*position + *d] == b'.' {
+    //         explorable.push(*d);
+    //     }
+    // }
+    //
+    //
+    // while explorable.len() > 0 {
+    //     let next_direction = explorable.pop().unwrap();
+    //     if *direction == next_direction {
+    //         current_cost += 1
+    //     }
+}
