@@ -27,6 +27,7 @@
 //! [`Grid`]: crate::util::grid
 use std::hash::{Hash, Hasher};
 use std::ops::{Add, AddAssign, Mul, Sub, SubAssign};
+use std::mem::swap;
 
 pub const ORIGIN: Point = Point::new(0, 0);
 pub const UP: Point = Point::new(0, -1);
@@ -69,6 +70,19 @@ impl Point {
     #[must_use]
     pub fn counter_clockwise(self) -> Self {
         Point::new(self.y, -self.x)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn mut_clockwise(&mut self) {
+        swap(&mut self.x, &mut self.y);
+        self.x = -self.x;
+    }
+    #[inline]
+    #[must_use]
+    pub fn mut_counter_clockwise(&mut self) {
+        swap(&mut  self.x, &mut self.y);
+        self.y = -self.y;
     }
 
     #[inline]
