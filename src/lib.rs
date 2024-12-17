@@ -1,3 +1,5 @@
+extern crate core;
+
 #[allow(dead_code)]
 pub mod char_map_rep;
 pub mod day09;

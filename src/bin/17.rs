@@ -19,7 +19,7 @@ fn main() -> Result<()> {
     println!("=== Part 1 ===");
 
     fn part1(input: &str) -> Result<String> {
-        Ok("0")
+        Ok(sol1(input))
     }
 
     assert_eq!(String::from("4,6,3,5,6,3,5,2,1,0"), part1(TEST)?);
