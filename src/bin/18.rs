@@ -1,9 +1,9 @@
 use anyhow::*;
 use aoc24::day18::*;
-use aoc24::*;
-use std::fs;
 use aoc24::util::grid::Grid;
 use aoc24::util::point::Point;
+use aoc24::*;
+use std::fs;
 
 const DAY: &str = "18";
 const INPUT_FILE: &str = "input/18.txt";
@@ -50,8 +50,8 @@ fn main() -> Result<()> {
         for ln in Grid::to_str(grid).lines() {
             println!("{:?}", ln);
         }
-        forward_step(Point::new(0,0), 0, cost_grid, grid);
-        Ok(cost_grid[Point::new(cost_grid.width-1, cost_grid.height-1)])
+        forward_step(Point::new(0, 0), 0, cost_grid, grid);
+        Ok(cost_grid[Point::new(cost_grid.width - 1, cost_grid.height - 1)])
     }
 
     // assert_eq!(0, part1(TEST)?);
@@ -63,15 +63,35 @@ fn main() -> Result<()> {
     //endregion
 
     //region Part 2
-    // println!("\n=== Part 2 ===");
-    // //
-    // fn part2(input: &str) -> Result<u64> {
-    //     Ok(1)
-    // }
-    // //
+    println!("\n=== Part 2 ===");
+    //
+    fn part2(input: &str) -> Result<u64> {
+        let mut res: u64 = 3451;
+        for i in (1024..3451).rev() {
+            let grid = &mut input_to_grid(input, i.clone() as usize);
+            let cost_grid = &mut Grid::same_size_with(grid, BASELINE_COST);
+            for pt in grid.find_all(CORRUPTED) {
+                cost_grid[pt] = UNREACHABLE_COST;
+            }
+
+            // for ln in Grid::to_str(grid).lines() {
+            //     println!("{:?}", ln);
+            // }
+            println!("{:?}", i);
+            forward_step(Point::new(0, 0), 0, cost_grid, grid);
+            if cost_grid[Point::new(cost_grid.width - 1, cost_grid.height - 1)] < BASELINE_COST {
+                res = i.clone();
+                break;
+            }
+        }
+        println!("Solution: {:?}", input.lines().skip(res as usize).next());
+        Ok(res+1)
+    }
+
+    //
     // assert_eq!(0, part2(TEST2)?);
-    // let res = part2(input_file.as_str())?;
-    // println!("Result = {}", res);
+    let res = part2(input_file.as_str())?;
+    println!("Result = {}", res);
     //endregion
 
     Ok(())

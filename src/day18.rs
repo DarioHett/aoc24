@@ -20,7 +20,7 @@ pub fn input_to_grid(input: &str, n: usize) -> Grid<u8> {
     for (x, y) in coords {
         pts.push(Point::new(x as i32, y as i32))
     }
-    let grid = &mut Grid::new(70+1, 70+1, b'.');
+    let grid = &mut Grid::new(70 + 1, 70 + 1, b'.');
     for (i, pt) in pts.iter().enumerate() {
         if i < n {
             grid[*pt] = b'#';
@@ -30,12 +30,15 @@ pub fn input_to_grid(input: &str, n: usize) -> Grid<u8> {
 }
 
 pub fn forward_step(pos: Point, cost: u32, cost_grid: &mut Grid<u32>, grid: &mut Grid<u8>) {
-    if cost_grid[pos] == UNREACHABLE_COST {return}
+    if cost_grid[pos] == UNREACHABLE_COST {
+        return;
+    }
     if cost < cost_grid[pos] {
         cost_grid[pos] = cost;
         for d in [UP, DOWN, LEFT, RIGHT] {
-            if grid.contains(pos+d) {
-                forward_step(pos+d, cost+1, cost_grid, grid)}
+            if grid.contains(pos + d) {
+                forward_step(pos + d, cost + 1, cost_grid, grid)
+            }
         }
     }
 }
@@ -84,7 +87,7 @@ mod tests {
         for ln in Grid::to_str(grid).lines() {
             println!("{:?}", ln);
         }
-        forward_step(Point::new(0,0), 0, cost_grid, grid);
+        forward_step(Point::new(0, 0), 0, cost_grid, grid);
         for ln in (&cost_grid).bytes.iter() {
             println!("{:?}", ln);
         }
