@@ -1,7 +1,4 @@
-use crate::util::grid::Grid;
-use crate::util::point::{Point, DOWN, LEFT, RIGHT, UP};
 use itertools::Itertools;
-use std::mem::swap;
 use std::ops::Rem;
 
 pub fn get_combo_operand(
@@ -70,7 +67,75 @@ pub fn handle_instruction(
             console.push_str(",");
         }
         console.push_str(&out.to_string());
-        println!("{:?}", (*console).as_str());
+        // println!("{:?}", (*console).as_str());
+        *index = *index + 1;
+        return;
+    }
+    if opcode == 6 {
+        let num = *register_A;
+        let denom = 2u32.pow(get_combo_operand(
+            operand, register_A, register_B, register_C,
+        ));
+        *register_B = num / denom;
+        *index += 1;
+        return;
+    }
+    if opcode == 7 {
+        let num = *register_A;
+        let denom = 2u32.pow(get_combo_operand(
+            operand, register_A, register_B, register_C,
+        ));
+        *register_C = num / denom;
+        *index += 1;
+        return;
+    }
+    unreachable!()
+}
+
+pub fn handle_instruction2(
+    opcode: u8,
+    operand: u8,
+    register_A: &mut u32,
+    register_B: &mut u32,
+    register_C: &mut u32,
+    index: &mut usize,
+    console: &mut Vec<u8>,
+) {
+    if opcode == 0 {
+        let num = *register_A;
+        let denom = 2u32.pow(get_combo_operand(
+            operand, register_A, register_B, register_C,
+        ));
+        *register_A = num / denom;
+        *index += 1;
+        return;
+    }
+    if opcode == 1 {
+        *register_B = *register_B ^ (operand as u32);
+        *index += 1;
+        return;
+    }
+    if opcode == 2 {
+        *register_B = get_combo_operand(operand, register_A, register_B, register_C).rem(8);
+        *index += 1;
+        return;
+    }
+    if opcode == 3 {
+        if *register_A == 0 {
+            *index = *index + 1;
+            return;
+        }
+        *index = (operand as usize).div_euclid(2);
+        return;
+    }
+    if opcode == 4 {
+        *register_B = *register_B ^ *register_C;
+        *index += 1;
+        return;
+    }
+    if opcode == 5 {
+        let out = get_combo_operand(operand, register_A, register_B, register_C).rem(8) as u8;
+        console.push(out);
         *index = *index + 1;
         return;
     }
@@ -129,6 +194,47 @@ pub fn sol1(input: &str) -> String {
     output.to_string()
 }
 
+pub fn run_pt2(mut a: u64, mut b: u64, mut c: u64, program: &[u64]) -> Vec<u64> {
+    let mut ip = 0;
+    let mut output = Vec::new();
+
+    while ip < program.len() {
+        let opcode = program[ip];
+        let literal = program[ip + 1];
+
+        let combo = match literal {
+            0 => 0,
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => a,
+            5 => b,
+            6 => c,
+            _ => literal, // invalid combo - pass through
+        };
+
+        match opcode {
+            0 => a /= 2u64.pow(combo as u32),
+            1 => b ^= literal,
+            2 => b = combo % 8,
+            3 => {
+                if a != 0 {
+                    ip = literal as usize;
+                    continue;
+                }
+            }
+            4 => b ^= c,
+            5 => output.push(combo % 8),
+            6 => b = a / 2u64.pow(combo as u32),
+            7 => c = a / 2u64.pow(combo as u32),
+            _ => panic!(),
+        };
+
+        ip += 2;
+    }
+
+    output
+}
 #[cfg(test)]
 mod tests {
     use super::*;
