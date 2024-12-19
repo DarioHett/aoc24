@@ -186,6 +186,57 @@ pub fn parse_pt1(input: &str) -> usize {
     ctr
 }
 
+pub fn parse_pt2(input: &str) -> usize {
+    let (patterns, designs) = input.split_once("\n\n").unwrap();
+    let mut lookup = Vec::new();
+    lookup.push(NextCell::new());
+
+    for pattern in patterns.split(", ") {
+        let mut i = 0;
+
+        for j in pattern.bytes().map(compress) {
+            if lookup[i].next[j] == 0 {
+                lookup[i].next[j] = lookup.len();
+                i = lookup.len();
+                lookup.push(NextCell::new());
+            } else {
+                i = lookup[i].next[j];
+            }
+        }
+
+        lookup[i].set_pattern();
+    }
+
+    let mut ctr = 0;
+    let mut ways = Vec::new();
+
+    for design in designs.lines().map(str::as_bytes) {
+        let size = design.len();
+
+        ways.clear();
+        ways.resize(size + 1, 0);
+        ways[0] = 1;
+
+        for start in 0..size {
+            if ways[start] > 0 {
+                let mut i = 0;
+
+                for end in start..size {
+                    i = lookup[i].next[compress(design[end])];
+                    if i == 0 {
+                        break;
+                    }
+                    ways[end + 1] += lookup[i].pattern() * ways[start];
+                }
+            }
+        }
+
+        ctr += ways[size];
+    }
+
+    ctr
+}
+
 fn compress(b: u8) -> usize {
     let n = b as usize;
     (n ^ (n >> 4)) % 8

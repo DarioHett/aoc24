@@ -52,16 +52,16 @@ fn main() -> Result<()> {
     //endregion
 
     //region Part 2
-    // println!("\n=== Part 2 ===");
-    // //
-    // fn part2(input: &str) -> Result<usize> {
-    //     Ok(parse_pt2(input))
-    // }
+    println!("\n=== Part 2 ===");
     //
-    // //
-    // assert_eq!(16, part2(TEST)?);
-    // let res = part2(input_file.as_str())?;
-    // println!("Result = {}", res);
+    fn part2(input: &str) -> Result<usize> {
+        Ok(parse_pt2(input))
+    }
+
+    //
+    assert_eq!(16, part2(TEST)?);
+    let res = part2(input_file.as_str())?;
+    println!("Result = {}", res);
     //endregion
 
     Ok(())
