@@ -4,6 +4,7 @@ use aoc24::util::point::{Point, DOWN, LEFT, RIGHT, UP};
 use aoc24::*;
 use itertools::Itertools;
 use std::fs;
+use aoc24::day21::{solve};
 
 const DAY: &str = "21";
 const INPUT_FILE: &str = "input/21.txt";
@@ -41,9 +42,10 @@ fn main() -> Result<()> {
     //region Part 1
     println!("=== Part 1 ===");
 
-    fn part1(input: &str) -> Result<usize> {
-        Ok(1)
+    fn part1(input: &str) -> Result<u64> {
+        Ok(solve(input).0)
     }
+
 
     let input_file = fs::read_to_string(INPUT_FILE)?;
     assert_eq!(126384, part1(TEST)?);
@@ -52,14 +54,14 @@ fn main() -> Result<()> {
     //endregion
 
     //region Part 2
-    // println!("\n=== Part 2 ===");
-    //
-    // fn part2(input: &str) -> Result<usize> {
-    //     Ok(1)
-    // }
+    println!("\n=== Part 2 ===");
+
+    fn part2(input: &str) -> Result<u64> {
+        Ok(solve(input).1)
+    }
     // assert_eq!(0, part2(TEST)?);
-    // let res = part2(input_file.as_str())?;
-    // println!("Result = {}", res);
+    let res = part2(input_file.as_str())?;
+    println!("Result = {}", res);
     //endregion
 
     Ok(())
