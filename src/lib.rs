@@ -12,6 +12,7 @@ pub mod day17;
 pub mod day18;
 pub mod day19;
 pub mod day21;
+pub mod day25;
 
 use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
